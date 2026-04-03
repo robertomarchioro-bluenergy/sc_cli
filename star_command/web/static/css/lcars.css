@@ -43,10 +43,11 @@ body {
 .lcars-layout {
     display: grid;
     grid-template-columns: 50px 1fr 280px;
-    grid-template-rows: 52px 1fr 160px 48px;
+    grid-template-rows: 52px 1fr auto 140px 48px;
     grid-template-areas:
         "sidebar header    header"
         "sidebar viewport  officers"
+        "sidebar actions   actions"
         "sidebar narrative narrative"
         "sidebar command   command";
     height: 100vh;
@@ -728,3 +729,159 @@ body {
 ::-webkit-scrollbar-track { background: #0a0a12; }
 ::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--lcars-amber); }
+
+/* ── Quick Action Bar ───────────────────────────── */
+
+.lcars-actions {
+    grid-area: actions;
+    background: var(--lcars-panel-bg);
+    border-top: 2px solid var(--lcars-amber);
+    padding: 6px 12px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+    overflow: hidden;
+}
+
+.lcars-actions .actions-label {
+    color: var(--lcars-text-dim);
+    font-size: 0.65rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-right: 4px;
+    white-space: nowrap;
+}
+
+.action-btn {
+    background: #1a1a2e;
+    border: 1px solid #333;
+    border-radius: 6px;
+    color: var(--lcars-gold);
+    font-family: inherit;
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 4px 10px;
+    cursor: pointer;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    white-space: nowrap;
+    transition: background 0.15s, border-color 0.15s;
+}
+.action-btn:hover {
+    background: #2a2a3e;
+    border-color: var(--lcars-amber);
+}
+.action-btn:active {
+    background: var(--lcars-amber);
+    color: #000;
+}
+.action-btn:disabled {
+    opacity: 0.3;
+    cursor: default;
+}
+
+/* Colori per categoria */
+.action-btn.cat-combat   { border-color: var(--lcars-red); color: var(--lcars-red); }
+.action-btn.cat-combat:hover { background: #2a1a1a; }
+.action-btn.cat-nav      { border-color: var(--lcars-blue); color: var(--lcars-blue); }
+.action-btn.cat-nav:hover { background: #1a1a2e; }
+.action-btn.cat-info     { border-color: var(--lcars-tan); color: var(--lcars-tan); }
+.action-btn.cat-info:hover { background: #1a1a18; }
+.action-btn.cat-officer  { border-color: var(--lcars-purple); color: var(--lcars-purple); }
+.action-btn.cat-officer:hover { background: #1a1a2a; }
+.action-btn.cat-system   { border-color: var(--bar-green); color: var(--bar-green); }
+.action-btn.cat-system:hover { background: #1a2a1a; }
+.action-btn.cat-help     { border-color: var(--lcars-amber); color: var(--lcars-amber); }
+.action-btn.cat-help:hover { background: #2a2a18; }
+
+.actions-sep {
+    width: 1px;
+    height: 20px;
+    background: #333;
+    margin: 0 2px;
+}
+
+/* ── Help Overlay ───────────────────────────────── */
+
+.help-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.85);
+    z-index: 80;
+    align-items: flex-start;
+    justify-content: center;
+    padding-top: 40px;
+    overflow-y: auto;
+}
+.help-overlay.active { display: flex; }
+
+.help-box {
+    background: var(--lcars-panel-bg);
+    border: 2px solid var(--lcars-amber);
+    border-radius: 16px;
+    padding: 28px 36px;
+    max-width: 800px;
+    width: 90%;
+    margin-bottom: 40px;
+}
+
+.help-box h2 {
+    color: var(--lcars-gold);
+    font-size: 1.4rem;
+    letter-spacing: 3px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.help-section {
+    margin-bottom: 18px;
+}
+.help-section h3 {
+    color: var(--lcars-amber);
+    font-size: 0.9rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    padding-bottom: 4px;
+    border-bottom: 1px solid #222;
+}
+
+.help-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+.help-table td {
+    padding: 3px 8px;
+    font-size: 0.82rem;
+    vertical-align: top;
+}
+.help-table td:first-child {
+    color: var(--bar-cyan);
+    font-weight: 700;
+    width: 220px;
+    white-space: nowrap;
+}
+.help-table td:last-child {
+    color: #aaa;
+}
+.help-table tr:nth-child(even) td {
+    background: rgba(255,255,255,0.02);
+}
+
+.help-close-btn {
+    display: block;
+    margin: 20px auto 0;
+    padding: 8px 28px;
+    background: var(--lcars-amber);
+    color: #000;
+    border: none;
+    border-radius: 8px;
+    font-family: inherit;
+    font-weight: 700;
+    font-size: 0.9rem;
+    cursor: pointer;
+    letter-spacing: 1px;
+}
+.help-close-btn:hover { background: var(--lcars-gold); }

@@ -7,6 +7,62 @@
 let isProcessing = false;
 let currentMapData = null;  // ultimo galaxy_state ricevuto
 let currentShipPos = null;  // [q_row, q_col, s_row, s_col]
+let currentContext = 'NAVIGATION';
+
+// ── Quick Action Buttons (per context) ─────────
+// { label, cmd, cat, prompt? }
+// cmd = comando da inviare direttamente, prompt = chiede input extra
+const QUICK_ACTIONS = {
+    COMBAT: [
+        { label: 'Faser',          cmd: null,              cat: 'combat',  prompt: 'Energia faser:', prefix: 'spara faser ' },
+        { label: 'Siluro',         cmd: 'spara siluro',    cat: 'combat' },
+        { label: 'Scudi MAX',      cmd: 'scudi max',       cat: 'combat' },
+        { label: 'Scudi %',        cmd: null,              cat: 'combat',  prompt: 'Livello scudi %:', prefix: 'scudi ' },
+        { label: 'Rapp. Tattico',  cmd: 'rapporto tattico', cat: 'officer' },
+        { label: 'Stato',          cmd: 'stato nave',      cat: 'info' },
+        { label: 'Sistemi',        cmd: 'sistemi',         cat: 'info' },
+    ],
+    NAVIGATION: [
+        { label: 'Warp',           cmd: null,              cat: 'nav',     prompt: 'Velocita warp (1-9):', prefix: 'warp ' },
+        { label: 'Impulso',        cmd: null,              cat: 'nav',     prompt: 'Settore (riga col):', prefix: 'impulso ' },
+        { label: 'Scan',           cmd: 'scan',            cat: 'nav' },
+        { label: 'Mappa',          cmd: 'mappa',           cat: 'info' },
+        { label: 'Stato',          cmd: 'stato nave',      cat: 'info' },
+        { label: 'Rapp. Scientifico', cmd: 'rapporto scientifico', cat: 'officer' },
+        { label: 'Rapp. Ingegnere', cmd: 'rapporto ingegnere', cat: 'officer' },
+    ],
+    DOCKED: [
+        { label: 'Ripara',         cmd: null,              cat: 'system',  prompt: 'Sistema da riparare:', prefix: 'ripara ' },
+        { label: 'Rapp. Ingegnere', cmd: 'rapporto ingegnere', cat: 'officer' },
+        { label: 'Rapp. Medico',   cmd: 'rapporto medico', cat: 'officer' },
+        { label: 'Stato',          cmd: 'stato nave',      cat: 'info' },
+        { label: 'Sistemi',        cmd: 'sistemi',         cat: 'info' },
+        { label: 'Warp',           cmd: null,              cat: 'nav',     prompt: 'Velocita warp (1-9):', prefix: 'warp ' },
+        { label: 'Missione',       cmd: 'missione',        cat: 'info' },
+    ],
+    EXPLORATION: [
+        { label: 'Scan',           cmd: 'scan',            cat: 'nav' },
+        { label: 'Rapp. Scientifico', cmd: 'rapporto scientifico', cat: 'officer' },
+        { label: 'Impulso',        cmd: null,              cat: 'nav',     prompt: 'Settore (riga col):', prefix: 'impulso ' },
+        { label: 'Mappa',          cmd: 'mappa',           cat: 'info' },
+        { label: 'Stato',          cmd: 'stato nave',      cat: 'info' },
+    ],
+    DIPLOMACY: [
+        { label: 'Rapp. Tattico',  cmd: 'rapporto tattico', cat: 'officer' },
+        { label: 'Rapp. Scientifico', cmd: 'rapporto scientifico', cat: 'officer' },
+        { label: 'Riunione',       cmd: 'riunione equipaggio', cat: 'officer' },
+        { label: 'Missione',       cmd: 'missione',        cat: 'info' },
+    ],
+};
+
+// Pulsanti universali (sempre visibili)
+const UNIVERSAL_ACTIONS = [
+    { label: 'Diario',     cmd: 'diario',          cat: 'info' },
+    { label: 'Missione',   cmd: 'missione',        cat: 'info' },
+    { label: 'Mappa',      cmd: 'mappa',           cat: 'info' },
+    { label: 'Salva+Esci', cmd: 'salva e esci',    cat: 'system' },
+    { label: '? Help',     cmd: null,               cat: 'help',  action: 'help' },
+];
 
 const $ = id => document.getElementById(id);
 const commandInput = $('command-input');
@@ -32,6 +88,18 @@ document.addEventListener('DOMContentLoaded', () => {
     commandInput.addEventListener('keydown', e => {
         if (e.key === 'Enter' && !isProcessing) sendCommand();
     });
+
+    // Escape chiude overlay aperti
+    document.addEventListener('keydown', e => {
+        if (e.key === 'Escape') {
+            closeHelp();
+            closeMap();
+            closeSystems();
+        }
+    });
+
+    // Render pulsanti iniziali
+    renderActionButtons('NAVIGATION');
 
     commandInput.focus();
 });
@@ -157,6 +225,12 @@ function updateBridge(state) {
     const badge = $('context-badge');
     badge.textContent = ctx;
     badge.className = `context-badge ${ctx}`;
+
+    // Update action buttons if context changed
+    if (ctx !== currentContext) {
+        currentContext = ctx;
+        renderActionButtons(ctx);
+    }
 
     // Bars
     updateBar('hull', ship.hull_pct, 100);
@@ -432,10 +506,94 @@ function showGameOver(reason, victory) {
     $('gameover-overlay').classList.add('active');
 }
 
+// ── Quick Action Buttons ───────────────────────
+function renderActionButtons(context) {
+    const bar = $('actions-bar');
+    // Mantieni il label
+    bar.innerHTML = '<span class="actions-label">Azioni:</span>';
+
+    // Pulsanti specifici per contesto
+    const contextActions = QUICK_ACTIONS[context] || QUICK_ACTIONS['NAVIGATION'];
+    for (const act of contextActions) {
+        bar.appendChild(makeActionBtn(act));
+    }
+
+    // Separatore
+    const sep = document.createElement('span');
+    sep.className = 'actions-sep';
+    bar.appendChild(sep);
+
+    // Pulsanti universali (deduplica se gia presenti nel contesto)
+    const contextCmds = new Set(contextActions.filter(a => a.cmd).map(a => a.cmd));
+    for (const act of UNIVERSAL_ACTIONS) {
+        if (act.cmd && contextCmds.has(act.cmd)) continue;
+        bar.appendChild(makeActionBtn(act));
+    }
+}
+
+function makeActionBtn(act) {
+    const btn = document.createElement('button');
+    btn.className = `action-btn cat-${act.cat}`;
+    btn.textContent = act.label;
+    btn.disabled = isProcessing;
+
+    btn.onclick = () => {
+        if (isProcessing) return;
+
+        // Azione speciale (help)
+        if (act.action === 'help') {
+            openHelp();
+            return;
+        }
+
+        // Comando diretto
+        if (act.cmd) {
+            commandInput.value = act.cmd;
+            sendCommand();
+            return;
+        }
+
+        // Comando con prompt (richiede input)
+        if (act.prompt) {
+            commandInput.value = act.prefix || '';
+            commandInput.focus();
+            commandInput.placeholder = act.prompt;
+            // Ripristina placeholder dopo blur
+            const restore = () => {
+                commandInput.placeholder = 'Inserisci comando...';
+                commandInput.removeEventListener('blur', restore);
+            };
+            commandInput.addEventListener('blur', restore);
+        }
+    };
+
+    // Tooltip
+    if (act.prompt) {
+        btn.title = act.prompt;
+    } else if (act.cmd) {
+        btn.title = act.cmd;
+    }
+
+    return btn;
+}
+
+// ── Help ───────────────────────────────────────
+function openHelp() {
+    $('help-overlay').classList.add('active');
+}
+
+function closeHelp() {
+    $('help-overlay').classList.remove('active');
+    commandInput.focus();
+}
+
 // ── Helpers ────────────────────────────────────
 function setProcessing(state) {
     isProcessing = state;
     commandInput.disabled = state;
     sendBtn.disabled = state;
     spinner.classList.toggle('active', state);
+
+    // Disabilita/abilita pulsanti azione
+    document.querySelectorAll('.action-btn').forEach(btn => btn.disabled = state);
 }

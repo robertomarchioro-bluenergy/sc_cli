@@ -93,6 +93,12 @@
             <div style="color:var(--lcars-text-dim);font-size:0.75rem;letter-spacing:1px;text-transform:uppercase">Ufficiali</div>
         </div>
 
+        <!-- Quick Action Bar -->
+        <div class="lcars-actions" id="actions-bar">
+            <span class="actions-label">Azioni:</span>
+            <!-- Populated by JS based on context -->
+        </div>
+
         <!-- Narrative Log -->
         <div class="lcars-narrative" id="narrative-log"></div>
 
@@ -133,6 +139,86 @@
             <h2 id="gameover-title">MISSIONE</h2>
             <div class="reason" id="gameover-reason"></div>
             <button onclick="window.location.href='/'">MENU PRINCIPALE</button>
+        </div>
+    </div>
+
+    <!-- Help Overlay -->
+    <div class="help-overlay" id="help-overlay">
+        <div class="help-box">
+            <h2>MANUALE DEL CAPITANO</h2>
+
+            <div class="help-section">
+                <h3>Combattimento</h3>
+                <table class="help-table">
+                    <tr><td>spara faser [energia]</td><td>Colpo faser con energia specificata (es: spara faser 500)</td></tr>
+                    <tr><td>spara siluro</td><td>Lancia un siluro fotone</td></tr>
+                    <tr><td>scudi max</td><td>Scudi al massimo</td></tr>
+                    <tr><td>scudi [%]</td><td>Imposta livello scudi (es: scudi 75)</td></tr>
+                </table>
+            </div>
+
+            <div class="help-section">
+                <h3>Navigazione</h3>
+                <table class="help-table">
+                    <tr><td>warp [velocita]</td><td>Viaggio a velocita warp (1-9). Consuma energia e dilithium</td></tr>
+                    <tr><td>impulso [riga] [col]</td><td>Movimento impulso al settore specificato (es: impulso 5 3)</td></tr>
+                    <tr><td>scan</td><td>Scansione del quadrante corrente. Rivela contenuti e adiacenti</td></tr>
+                    <tr><td>mappa</td><td>Visualizza mappa galattica con panoramica e settori</td></tr>
+                </table>
+            </div>
+
+            <div class="help-section">
+                <h3>Informazioni</h3>
+                <table class="help-table">
+                    <tr><td>stato nave</td><td>Mostra stato completo della nave</td></tr>
+                    <tr><td>sistemi</td><td>Diagnostica sistemi di bordo con integrita e penalty</td></tr>
+                    <tr><td>missione</td><td>Mostra obiettivi missione corrente</td></tr>
+                    <tr><td>diario</td><td>Mostra diario del Capitano</td></tr>
+                    <tr><td>diario: [testo]</td><td>Aggiungi nota manuale al diario (es: diario: Nota importante)</td></tr>
+                    <tr><td>export log</td><td>Esporta diario su file</td></tr>
+                </table>
+            </div>
+
+            <div class="help-section">
+                <h3>Ufficiali</h3>
+                <table class="help-table">
+                    <tr><td>rapporto tattico</td><td>Consulta Ufficiale Tattico (consigli combattimento)</td></tr>
+                    <tr><td>rapporto ingegnere</td><td>Consulta Ingegnere Capo (stato sistemi, riparazioni)</td></tr>
+                    <tr><td>rapporto scientifico</td><td>Consulta Ufficiale Scientifico (analisi sensori)</td></tr>
+                    <tr><td>rapporto medico</td><td>Consulta Medico di Bordo (stato equipaggio)</td></tr>
+                    <tr><td>riunione equipaggio</td><td>Convoca tutti gli ufficiali per briefing</td></tr>
+                </table>
+            </div>
+
+            <div class="help-section">
+                <h3>Stazione / Riparazioni</h3>
+                <table class="help-table">
+                    <tr><td>attracco base stellare</td><td>Attracca a una base stellare adiacente</td></tr>
+                    <tr><td>ripara [sistema]</td><td>Avvia riparazione (es: ripara sensori)</td></tr>
+                </table>
+            </div>
+
+            <div class="help-section">
+                <h3>Gioco</h3>
+                <table class="help-table">
+                    <tr><td>salva e esci</td><td>Salva partita e torna al menu</td></tr>
+                    <tr><td>esci / quit</td><td>Abbandona senza salvare (richiede conferma)</td></tr>
+                    <tr><td>?</td><td>Mostra comandi disponibili nel contesto corrente</td></tr>
+                </table>
+            </div>
+
+            <div class="help-section">
+                <h3>Consumi Warp</h3>
+                <table class="help-table">
+                    <tr><td>Warp 1</td><td>200 energia, 1 dilithium, 1 quadrante</td></tr>
+                    <tr><td>Warp 3</td><td>500 energia, 3 dilithium, 3 quadranti</td></tr>
+                    <tr><td>Warp 6</td><td>1200 energia, 8 dilithium, 6 quadranti</td></tr>
+                    <tr><td>Warp 9</td><td>2000 energia, 15 dilithium, 9 quadranti</td></tr>
+                    <tr><td>Impulso</td><td>100 energia, 0 dilithium, 1 settore</td></tr>
+                </table>
+            </div>
+
+            <button class="help-close-btn" onclick="closeHelp()">CHIUDI</button>
         </div>
     </div>
 
