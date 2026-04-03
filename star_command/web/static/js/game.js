@@ -14,17 +14,17 @@ let currentContext = 'NAVIGATION';
 // cmd = comando da inviare direttamente, prompt = chiede input extra
 const QUICK_ACTIONS = {
     COMBAT: [
-        { label: 'Faser',          cmd: null,              cat: 'combat',  prompt: 'Energia faser:', prefix: 'spara faser ' },
+        { label: 'Faser',          cmd: null,              cat: 'combat',  prompt: 'Energia faser:', prefix: 'spara faser ', hint: 'spara faser [energia]  es: spara faser 500' },
         { label: 'Siluro',         cmd: 'spara siluro',    cat: 'combat' },
         { label: 'Scudi MAX',      cmd: 'scudi max',       cat: 'combat' },
-        { label: 'Scudi %',        cmd: null,              cat: 'combat',  prompt: 'Livello scudi %:', prefix: 'scudi ' },
+        { label: 'Scudi %',        cmd: null,              cat: 'combat',  prompt: 'Livello scudi %:', prefix: 'scudi ', hint: 'scudi [percentuale]  es: scudi 75' },
         { label: 'Rapp. Tattico',  cmd: 'rapporto tattico', cat: 'officer' },
         { label: 'Stato',          cmd: 'stato nave',      cat: 'info' },
         { label: 'Sistemi',        cmd: 'sistemi',         cat: 'info' },
     ],
     NAVIGATION: [
-        { label: 'Warp',           cmd: null,              cat: 'nav',     prompt: 'Quadrante destinazione (riga col):', prefix: 'warp ' },
-        { label: 'Impulso',        cmd: null,              cat: 'nav',     prompt: 'Settore (riga col):', prefix: 'impulso ' },
+        { label: 'Warp',           cmd: null,              cat: 'nav',     prompt: 'Quadrante destinazione (riga col):', prefix: 'warp ', hint: 'warp [riga] [col]  es: warp 3 5' },
+        { label: 'Impulso',        cmd: null,              cat: 'nav',     prompt: 'Settore (riga col):', prefix: 'impulso ', hint: 'impulso [riga] [col]  es: impulso 4 7' },
         { label: 'Scan',           cmd: 'scan',            cat: 'nav' },
         { label: 'Mappa',          cmd: 'mappa',           cat: 'info' },
         { label: 'Stato',          cmd: 'stato nave',      cat: 'info' },
@@ -32,18 +32,18 @@ const QUICK_ACTIONS = {
         { label: 'Rapp. Ingegnere', cmd: 'rapporto ingegnere', cat: 'officer' },
     ],
     DOCKED: [
-        { label: 'Ripara',         cmd: null,              cat: 'system',  prompt: 'Sistema da riparare:', prefix: 'ripara ' },
+        { label: 'Ripara',         cmd: null,              cat: 'system',  prompt: 'Sistema da riparare:', prefix: 'ripara ', hint: 'ripara [sistema]  es: ripara sensori' },
         { label: 'Rapp. Ingegnere', cmd: 'rapporto ingegnere', cat: 'officer' },
         { label: 'Rapp. Medico',   cmd: 'rapporto medico', cat: 'officer' },
         { label: 'Stato',          cmd: 'stato nave',      cat: 'info' },
         { label: 'Sistemi',        cmd: 'sistemi',         cat: 'info' },
-        { label: 'Warp',           cmd: null,              cat: 'nav',     prompt: 'Quadrante destinazione (riga col):', prefix: 'warp ' },
+        { label: 'Warp',           cmd: null,              cat: 'nav',     prompt: 'Quadrante destinazione (riga col):', prefix: 'warp ', hint: 'warp [riga] [col]  es: warp 3 5' },
         { label: 'Missione',       cmd: 'missione',        cat: 'info' },
     ],
     EXPLORATION: [
         { label: 'Scan',           cmd: 'scan',            cat: 'nav' },
         { label: 'Rapp. Scientifico', cmd: 'rapporto scientifico', cat: 'officer' },
-        { label: 'Impulso',        cmd: null,              cat: 'nav',     prompt: 'Settore (riga col):', prefix: 'impulso ' },
+        { label: 'Impulso',        cmd: null,              cat: 'nav',     prompt: 'Settore (riga col):', prefix: 'impulso ', hint: 'impulso [riga] [col]  es: impulso 4 7' },
         { label: 'Mappa',          cmd: 'mappa',           cat: 'info' },
         { label: 'Stato',          cmd: 'stato nave',      cat: 'info' },
     ],
@@ -104,11 +104,30 @@ document.addEventListener('DOMContentLoaded', () => {
     commandInput.focus();
 });
 
+// ── Command Hints ─────────────────────────────
+function showCommandHint(text) {
+    let hint = document.getElementById('command-hint');
+    if (!hint) {
+        hint = document.createElement('div');
+        hint.id = 'command-hint';
+        const cmdBar = document.querySelector('.lcars-command');
+        if (cmdBar) cmdBar.appendChild(hint);
+    }
+    hint.textContent = text;
+    hint.style.display = 'block';
+}
+
+function hideCommandHint() {
+    const hint = document.getElementById('command-hint');
+    if (hint) hint.style.display = 'none';
+}
+
 // ── Command ────────────────────────────────────
 async function sendCommand() {
     const cmd = commandInput.value.trim();
     if (!cmd || isProcessing) return;
 
+    hideCommandHint();
     commandInput.value = '';
     appendNarrative(`> ${cmd}`, 'dim');
     setProcessing(true);
@@ -558,9 +577,12 @@ function makeActionBtn(act) {
             commandInput.value = act.prefix || '';
             commandInput.focus();
             commandInput.placeholder = act.prompt;
-            // Ripristina placeholder dopo blur
+            // Mostra hint sotto la barra comandi
+            showCommandHint(act.hint || act.prompt);
+            // Ripristina dopo blur
             const restore = () => {
                 commandInput.placeholder = 'Inserisci comando...';
+                hideCommandHint();
                 commandInput.removeEventListener('blur', restore);
             };
             commandInput.addEventListener('blur', restore);

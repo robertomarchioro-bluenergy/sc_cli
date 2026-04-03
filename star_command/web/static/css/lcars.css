@@ -378,6 +378,18 @@ body {
     align-items: center;
     gap: 8px;
     padding: 0 12px;
+    flex-wrap: wrap;
+    position: relative;
+}
+
+#command-hint {
+    display: none;
+    width: 100%;
+    font-size: 0.7rem;
+    color: #666;
+    letter-spacing: 1px;
+    padding: 0 4px 4px;
+    margin-top: -4px;
 }
 
 .lcars-command .prompt-label {

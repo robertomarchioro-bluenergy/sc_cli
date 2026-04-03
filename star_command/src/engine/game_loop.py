@@ -695,6 +695,15 @@ def run_game_loop(
         game_state.stardate,
     )
 
+    # Comandi passivi: non avanzano il turno, non chiamano API ufficiali
+    PASSIVE_ACTIONS = {
+        CommandAction.SHOW_MAP, CommandAction.SHOW_STATUS,
+        CommandAction.SHOW_SYSTEMS, CommandAction.SHOW_CAPTAIN_LOG,
+        CommandAction.SHOW_MISSION, CommandAction.SHOW_MENU,
+        CommandAction.CAPTAIN_LOG_MANUAL, CommandAction.EXPORT_LOG,
+        CommandAction.UNKNOWN,
+    }
+
     while not game_state.is_over():
         # 1. Aggiorna presentazione (bridge completo)
         presenter.render_bridge(game_state.to_dict())
@@ -712,7 +721,7 @@ def run_game_loop(
                 game_state.last_advice = AdviceRecord(
                     officer_role=active_officer.role,
                     advice_text=advice,
-                    action_suggested="",  # verrà estratto dal testo se necessario
+                    action_suggested="",
                     turn_number=game_state.turn_number,
                 )
                 presenter.show_officer_message(
@@ -722,9 +731,16 @@ def run_game_loop(
                     active_officer.trust,
                 )
 
-        # 3. Leggi comando capitano
-        raw_input = presenter.get_captain_input()
-        cmd = command_parser.parse(raw_input)
+        # 3. Leggi comando — loop interno per comandi passivi (no API call)
+        while True:
+            raw_input = presenter.get_captain_input()
+            cmd = command_parser.parse(raw_input)
+
+            if cmd.action in PASSIVE_ACTIONS:
+                execute_command(cmd, game_state, officers, presenter, difficulty, client, model)
+                presenter.render_bridge(game_state.to_dict())
+                continue
+            break
 
         # 4. Verifica se il comando segue il consiglio dell'ufficiale attivo
         advice_followed = check_advice_followed(cmd, game_state.last_advice)
@@ -733,7 +749,7 @@ def run_game_loop(
             if active_officer:
                 active_officer.update_trust(advice_followed)
 
-        # 5. Esegui il comando
+        # 5. Esegui il comando (azione attiva)
         execute_command(cmd, game_state, officers, presenter, difficulty, client, model)
 
         # 6. Tick riparazioni
