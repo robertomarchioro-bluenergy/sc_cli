@@ -181,14 +181,16 @@ class TestShowOverlays:
         assert "DIARIO" in output
         assert "Prima nota" in output
 
-    def test_map_overlay(self, presenter, console):
+    def test_map_overlay(self, presenter, console, monkeypatch):
         # Crea una galaxy minima per il test
         from src.engine.galaxy import Galaxy
+        monkeypatch.setattr("rich.prompt.Prompt.ask", lambda *a, **kw: "")
         g = Galaxy()
         g.generate(42, {"nemici": [], "basi_stellari": 0})
         presenter.show_map_overlay(g.to_dict(), (1, 1, 4, 4))
         output = get_output(console)
         assert "MAPPA" in output
+        assert "SETTORI" in output
 
 
 class TestContextualMenu:
