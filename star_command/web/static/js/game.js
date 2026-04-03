@@ -104,30 +104,12 @@ document.addEventListener('DOMContentLoaded', () => {
     commandInput.focus();
 });
 
-// ── Command Hints ─────────────────────────────
-function showCommandHint(text) {
-    let hint = document.getElementById('command-hint');
-    if (!hint) {
-        hint = document.createElement('div');
-        hint.id = 'command-hint';
-        const cmdBar = document.querySelector('.lcars-command');
-        if (cmdBar) cmdBar.appendChild(hint);
-    }
-    hint.textContent = text;
-    hint.style.display = 'block';
-}
-
-function hideCommandHint() {
-    const hint = document.getElementById('command-hint');
-    if (hint) hint.style.display = 'none';
-}
-
 // ── Command ────────────────────────────────────
 async function sendCommand() {
     const cmd = commandInput.value.trim();
     if (!cmd || isProcessing) return;
 
-    hideCommandHint();
+    commandInput.placeholder = 'Inserisci comando...';
     commandInput.value = '';
     appendNarrative(`> ${cmd}`, 'dim');
     setProcessing(true);
@@ -572,17 +554,13 @@ function makeActionBtn(act) {
             return;
         }
 
-        // Comando con prompt (richiede input)
+        // Comando con prompt (richiede input — hint come placeholder)
         if (act.prompt) {
-            commandInput.value = act.prefix || '';
+            commandInput.value = '';
             commandInput.focus();
-            commandInput.placeholder = act.prompt;
-            // Mostra hint sotto la barra comandi
-            showCommandHint(act.hint || act.prompt);
-            // Ripristina dopo blur
+            commandInput.placeholder = act.hint || act.prompt;
             const restore = () => {
                 commandInput.placeholder = 'Inserisci comando...';
-                hideCommandHint();
                 commandInput.removeEventListener('blur', restore);
             };
             commandInput.addEventListener('blur', restore);

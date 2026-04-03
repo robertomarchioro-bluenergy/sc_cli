@@ -18,7 +18,7 @@ from .combat import (
     calcola_colpo_nemico, check_torpedo_misfire,
     get_enemy_action, calculate_distance,
 )
-from .navigation import navigate_warp, navigate_impulse
+from .navigation import navigate_warp, navigate_impulse, WARP_SPEED_MAP, get_warp_spec
 from .difficulty import DifficultyConfig
 from .captain_log import CaptainLog, LogTrigger, check_log_triggers, OfficerAPIError
 from .campaign import MissionConfig, CampaignState, save_campaign_state
@@ -464,9 +464,21 @@ def _execute_navigate_warp(
         )
         return
 
+    # Auto-calcola velocità warp minima necessaria
+    q_row, q_col = game_state.ship.position[0], game_state.ship.position[1]
+    q_dist = abs(target_q_row - q_row) + abs(target_q_col - q_col)
+    warp_speed = 1
+    for speed in sorted(WARP_SPEED_MAP.keys()):
+        if speed == 0:
+            continue
+        spec = get_warp_spec(speed, game_state.ship)
+        if spec.distanza_quadranti >= q_dist:
+            warp_speed = speed
+            break
+
     result = navigate_warp(
         game_state.ship, game_state.galaxy, game_state.systems,
-        difficulty, target_q_row, target_q_col,
+        difficulty, target_q_row, target_q_col, warp_speed=warp_speed,
     )
     if result.success:
         game_state.stardate += result.stardate_elapsed
