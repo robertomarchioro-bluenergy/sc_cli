@@ -63,8 +63,8 @@ class ParsedCommand:
 PATTERNS: list[tuple[str, CommandAction]] = [
     (r"(fuoco|spara|fire).*(silur|torpedo)", CommandAction.FIRE_TORPEDO),
     (r"(fuoco|spara|fire).*(faser|phaser)", CommandAction.FIRE_PHASER),
-    (r"warp\s*(\d)", CommandAction.NAVIGATE_WARP),
-    (r"(impulso|impulse|subwarp)", CommandAction.NAVIGATE_IMPULSE),
+    (r"warp\s+(\d+)\s+(\d+)", CommandAction.NAVIGATE_WARP),
+    (r"(impulso|impulse|subwarp)\s+(\d+)\s+(\d+)", CommandAction.NAVIGATE_IMPULSE),
     (r"(scan|scansion|analizza\s+settore)", CommandAction.SCAN),
     (r"(scudi|shield).*(mass|max|pieno|full)", CommandAction.SHIELDS_MAX),
     (r"(scudi|shield)\s*(\d+)", CommandAction.SHIELDS_SET),
@@ -81,7 +81,7 @@ PATTERNS: list[tuple[str, CommandAction]] = [
     (r"(rapporto|report|analiz).*(scien|science)", CommandAction.OFFICER_SCIENCE),
     (r"(rapporto|report|analiz).*(medic|doctor|doc)", CommandAction.OFFICER_MEDICAL),
     (r"(riconosc|ringrazi|acknowledge)\s+(\w+)", CommandAction.ACKNOWLEDGE_OFFICER),
-    (r"(riunione|meeting).*(equipaggio|crew)", CommandAction.CREW_MEETING),
+    (r"(riunione|meeting|rapporto).*(equipaggio|crew)", CommandAction.CREW_MEETING),
     (r"(missione|mission|obiettiv)", CommandAction.SHOW_MISSION),
     (r"(salva\s*(e|ed)?\s*(esci|quit)|save\s*(and|&)?\s*quit)", CommandAction.SAVE_AND_QUIT),
     (r"(esci|quit|exit|fine\s+partita|abbandona)", CommandAction.QUIT),
@@ -134,10 +134,10 @@ def _extract_params(
 
     if action == CommandAction.NAVIGATE_WARP:
         groups = match.groups()
-        for g in groups:
-            if g and g.isdigit():
-                params["speed"] = int(g)
-                break
+        nums = [g for g in groups if g and g.isdigit()]
+        if len(nums) >= 2:
+            params["q_row"] = int(nums[0])
+            params["q_col"] = int(nums[1])
 
     elif action == CommandAction.SHIELDS_SET:
         groups = match.groups()
@@ -176,11 +176,11 @@ def _extract_params(
                         break
 
     elif action == CommandAction.NAVIGATE_IMPULSE:
-        # Cerca coordinate settore
-        num_match = re.findall(r"\d+", raw_text)
-        if len(num_match) >= 2:
-            params["s_row"] = int(num_match[0])
-            params["s_col"] = int(num_match[1])
+        groups = match.groups()
+        nums = [g for g in groups if g and g.isdigit()]
+        if len(nums) >= 2:
+            params["s_row"] = int(nums[0])
+            params["s_col"] = int(nums[1])
 
     return params
 
@@ -203,7 +203,7 @@ CONTEXT_MENUS: dict[str, list[tuple[str, str]]] = {
         ("sistemi", "Mostra sistemi di bordo"),
     ],
     "NAVIGATION": [
-        ("warp [velocità]", "Viaggio warp verso destinazione"),
+        ("warp [riga] [col]", "Viaggio warp al quadrante specificato"),
         ("impulso [r] [c]", "Movimento impulso nel quadrante"),
         ("scan", "Scansione settore/quadrante"),
         ("mappa", "Mostra mappa galattica"),
@@ -217,7 +217,7 @@ CONTEXT_MENUS: dict[str, list[tuple[str, str]]] = {
         ("rapporto medico", "Consulta Medico di Bordo"),
         ("stato nave", "Mostra stato completo"),
         ("sistemi", "Diagnostica sistemi"),
-        ("warp [velocità]", "Lascia base e viaggia"),
+        ("warp [riga] [col]", "Lascia base e viaggia"),
         ("missione", "Mostra obiettivi missione"),
     ],
     "EXPLORATION": [

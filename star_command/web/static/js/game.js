@@ -23,7 +23,7 @@ const QUICK_ACTIONS = {
         { label: 'Sistemi',        cmd: 'sistemi',         cat: 'info' },
     ],
     NAVIGATION: [
-        { label: 'Warp',           cmd: null,              cat: 'nav',     prompt: 'Velocita warp (1-9):', prefix: 'warp ' },
+        { label: 'Warp',           cmd: null,              cat: 'nav',     prompt: 'Quadrante destinazione (riga col):', prefix: 'warp ' },
         { label: 'Impulso',        cmd: null,              cat: 'nav',     prompt: 'Settore (riga col):', prefix: 'impulso ' },
         { label: 'Scan',           cmd: 'scan',            cat: 'nav' },
         { label: 'Mappa',          cmd: 'mappa',           cat: 'info' },
@@ -37,7 +37,7 @@ const QUICK_ACTIONS = {
         { label: 'Rapp. Medico',   cmd: 'rapporto medico', cat: 'officer' },
         { label: 'Stato',          cmd: 'stato nave',      cat: 'info' },
         { label: 'Sistemi',        cmd: 'sistemi',         cat: 'info' },
-        { label: 'Warp',           cmd: null,              cat: 'nav',     prompt: 'Velocita warp (1-9):', prefix: 'warp ' },
+        { label: 'Warp',           cmd: null,              cat: 'nav',     prompt: 'Quadrante destinazione (riga col):', prefix: 'warp ' },
         { label: 'Missione',       cmd: 'missione',        cat: 'info' },
     ],
     EXPLORATION: [

@@ -454,16 +454,19 @@ def _execute_navigate_warp(
     difficulty: DifficultyConfig,
 ) -> None:
     """Esegue navigazione warp"""
-    speed = command.params.get("speed", 1)
-    # Per ora, naviga al quadrante specificato o avanza linearmente
-    q_row, q_col = game_state.ship.position[0], game_state.ship.position[1]
-    # Calcola destinazione semplice: avanza nella direzione warp
-    target_q_row = min(8, q_row + 1)
-    target_q_col = q_col
+    target_q_row = command.params.get("q_row")
+    target_q_col = command.params.get("q_col")
+
+    if target_q_row is None or target_q_col is None:
+        presenter.show_narrative_short(
+            "Specificare destinazione: warp [riga] [colonna] (es. warp 3 5)",
+            color="yellow",
+        )
+        return
 
     result = navigate_warp(
         game_state.ship, game_state.galaxy, game_state.systems,
-        difficulty, target_q_row, target_q_col, warp_speed=speed,
+        difficulty, target_q_row, target_q_col,
     )
     if result.success:
         game_state.stardate += result.stardate_elapsed
