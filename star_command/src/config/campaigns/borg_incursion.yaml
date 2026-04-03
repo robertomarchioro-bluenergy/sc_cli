@@ -1,0 +1,103 @@
+campagna:
+  nome: "Incursione Borg"
+  descrizione: "Un cubo Borg è stato rilevato in rotta verso la Terra. Ogni settore attraversato è un settore perduto. La corsa contro il tempo più disperata della Federazione."
+  stardate_inizio: 2366.8
+  difficolta_default: HARD
+  nave_suggerita: Sovereign
+
+  missioni:
+    - id: BI01
+      nome: "Il Segnale"
+      descrizione_narrativa: |
+        L'Avamposto 157 ha smesso di trasmettere. L'ultimo messaggio conteneva
+        una sola parola, ripetuta: "Resistenza." Sensori a lungo raggio
+        confermano un oggetto di massa colossale in avvicinamento a warp 9.6.
+        Siete la nave più vicina. Andate a vedere.
+      obiettivo_testo: "Raggiungi l'Avamposto 157 e identifica la minaccia"
+      obiettivi:
+        - {tipo: investigazione, bersaglio: avamposto_157}
+      deadline_stardate: 2367.2
+      nemici:
+        - {tipo: borg, quantita: 1}
+      basi_stellari: 1
+      seed_galassia: 1701
+      consiglieri_speciali: []
+      silenti_eventi:
+        - {tipo: lettura_anomala, settore: [8, 8], nota: "Campo di distorsione subspaziale di proporzioni mai registrate"}
+      vittoria_alternativa: null
+
+    - id: BI02
+      prerequisito: BI01_completata
+      nome: "Wolf 359"
+      descrizione_narrativa: |
+        Il cubo Borg ha ignorato ogni tentativo di comunicazione. Quaranta
+        navi della Flotta Stellare si stanno radunando nel sistema Wolf 359
+        per un'ultima linea di difesa. Il vostro compito: ritardare il cubo
+        abbastanza da permettere l'evacuazione delle colonie nel suo percorso.
+        Non dovete vincere. Dovete sopravvivere.
+      obiettivo_testo: "Sopravvivi 15 turni e proteggi le navi di evacuazione"
+      obiettivi:
+        - {tipo: sopravvivenza}
+      deadline_stardate: 2367.8
+      nemici:
+        - {tipo: borg, quantita: 2}
+        - {tipo: klingon, quantita: 1}
+      basi_stellari: 1
+      seed_galassia: 359
+      consiglieri_speciali: []
+      silenti_eventi: []
+      vittoria_alternativa: null
+
+    - id: BI03
+      prerequisito: BI02_completata
+      nome: "La Frequenza Dimenticata"
+      descrizione_narrativa: |
+        Tra i detriti di Wolf 359 avete recuperato un frammento di dati
+        dal relitto della USS Saratoga. Contiene una frequenza di risonanza
+        che sembra destabilizzare gli scudi rigenerativi Borg. Il problema:
+        va testata in combattimento ravvicinato. E i Romulani vogliono
+        quei dati per sé.
+      obiettivo_testo: "Testa la frequenza anti-Borg e difendi i dati dai Romulani"
+      obiettivi:
+        - {tipo: investigazione, bersaglio: frequenza_risonanza}
+        - {tipo: distruggi_nemici, specie: romulani, quantita: 2}
+      deadline_stardate: 2368.3
+      nemici:
+        - {tipo: romulani, quantita: 2}
+        - {tipo: borg, quantita: 1}
+      basi_stellari: 1
+      seed_galassia: 2401
+      consiglieri_speciali: []
+      silenti_eventi:
+        - tipo: relitto_trovabile
+          settore: [5, 2]
+          descrizione: "Frammento di tecnologia Borg — il nucleo di vinculum è ancora attivo"
+      vittoria_alternativa: null
+
+    - id: BI04
+      prerequisito: BI03_completata
+      nome: "Settore Zero"
+      descrizione_narrativa: |
+        La frequenza funziona, ma serve un'antenna sufficiente a
+        trasmetterla a distanza. L'unica struttura adeguata è l'array di
+        comunicazione nel Settore 001 — in orbita di Sol. Il cubo Borg
+        sarà lì tra 48 ore. L'ambasciatore Vulcaniano è stato assegnato
+        per coordinare la risposta alleata. È l'ultima occasione.
+      obiettivo_testo: "Raggiungi il Settore 001 e attiva la frequenza anti-Borg"
+      obiettivi:
+        - {tipo: distruggi_nemici, specie: borg, quantita: 2}
+        - {tipo: sopravvivenza}
+      deadline_stardate: 2368.8
+      nemici:
+        - {tipo: borg, quantita: 2}
+        - {tipo: silenti, quantita: 1}
+      basi_stellari: 2
+      seed_galassia: 3141
+      consiglieri_speciali:
+        - ambasciatore_vulcaniano
+      silenti_eventi:
+        - {tipo: primo_contatto}
+      vittoria_alternativa:
+        tipo: diplomatica
+        condizione: "I Borg accettano il cessate il fuoco dopo la destabilizzazione"
+        bonus: "+40 morale, drone Borg liberato fornisce dati tecnologici"

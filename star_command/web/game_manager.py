@@ -29,7 +29,8 @@ from src.presentation.web_presenter import WebPresenter
 
 logger = logging.getLogger(__name__)
 
-DEFAULT_CAMPAIGN = Path(__file__).parent.parent / "src" / "config" / "campaigns" / "crisis_of_korvath.yaml"
+CAMPAIGNS_DIR = Path(__file__).parent.parent / "src" / "config" / "campaigns"
+DEFAULT_CAMPAIGN = CAMPAIGNS_DIR / "crisis_of_korvath.yaml"
 
 
 def _create_anthropic_client(api_key: str | None):
@@ -112,10 +113,29 @@ class GameManager:
                 "torpedoes": stats.torpedoes,
                 "dilithium": stats.dilithium,
             })
-        return {"difficulties": difficulties, "ships": ships}
+
+        # Carica campagne disponibili
+        campaigns = []
+        for yaml_file in sorted(CAMPAIGNS_DIR.glob("*.yaml")):
+            try:
+                c = Campaign()
+                c.load_from_yaml(str(yaml_file))
+                campaigns.append({
+                    "id": yaml_file.stem,
+                    "nome": c.nome,
+                    "descrizione": c.descrizione,
+                    "missioni": len(c.missions),
+                    "difficolta": c.difficolta_default.value,
+                    "nave_suggerita": c.nave_suggerita.value,
+                })
+            except Exception:
+                logger.warning("Impossibile caricare campagna %s", yaml_file)
+
+        return {"difficulties": difficulties, "ships": ships, "campaigns": campaigns}
 
     def start_game(self, session_id: str, ship_name: str,
-                   ship_class_id: str, difficulty_id: str) -> dict[str, Any]:
+                   ship_class_id: str, difficulty_id: str,
+                   campaign_id: str = "crisis_of_korvath") -> dict[str, Any]:
         """Inizializza e avvia il game loop in un thread."""
         session = self.get_session(session_id)
         if session is None:
@@ -146,8 +166,11 @@ class GameManager:
         client = _create_anthropic_client(api_key)
 
         # Campagna
+        campaign_file = CAMPAIGNS_DIR / f"{campaign_id}.yaml"
+        if not campaign_file.exists():
+            campaign_file = DEFAULT_CAMPAIGN
         campaign = Campaign()
-        campaign.load_from_yaml(str(DEFAULT_CAMPAIGN))
+        campaign.load_from_yaml(str(campaign_file))
 
         campaign_state = CampaignState(
             nome_campagna=campaign.nome,

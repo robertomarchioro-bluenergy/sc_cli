@@ -1,0 +1,126 @@
+campagna:
+  nome: "Il Gambetto Cardassiano"
+  descrizione: "Una crisi diplomatica con l'Unione Cardassiana minaccia la fragile pace. Intrighi, tradimenti e battaglie navali al confine della Zona Demilitarizzata."
+  stardate_inizio: 2371.3
+  difficolta_default: NORMAL
+  nave_suggerita: Galaxy
+
+  missioni:
+    - id: CG01
+      nome: "Incidente alla DMZ"
+      descrizione_narrativa: |
+        Tre navi cargo della Federazione sono state attaccate nella Zona
+        Demilitarizzata. I Cardassiani negano ogni coinvolgimento, ma i
+        resti dei siluri parlano chiaro. Comando Flotta vi ordina di
+        pattugliare la DMZ e raccogliere prove prima che la situazione
+        degeneri in guerra aperta.
+      obiettivo_testo: "Pattuglia la DMZ e neutralizza 2 navi Klingon mercenarie"
+      obiettivi:
+        - {tipo: distruggi_nemici, specie: klingon, quantita: 2}
+        - {tipo: investigazione, bersaglio: resti_siluri}
+      deadline_stardate: 2372.0
+      nemici:
+        - {tipo: klingon, quantita: 2}
+      basi_stellari: 1
+      seed_galassia: 513
+      consiglieri_speciali: []
+      silenti_eventi:
+        - {tipo: lettura_anomala, settore: [4, 5], nota: "Segnale subspaziale criptato di origine Cardassiana"}
+      vittoria_alternativa: null
+
+    - id: CG02
+      prerequisito: CG01_completata
+      nome: "Il Disertore"
+      descrizione_narrativa: |
+        Un Gul Cardassiano, Durak, ha contattato la Federazione chiedendo
+        asilo. Sostiene di avere prove che il Consiglio Centrale Cardassiano
+        sta preparando un'invasione. Dovete recuperarlo dalla sua nave in
+        avaria nel settore Badlands prima che i suoi lo trovino.
+      obiettivo_testo: "Recupera il Gul Durak dalle Badlands prima dei Cardassiani"
+      obiettivi:
+        - {tipo: scorta, bersaglio: gul_durak, destinazione: starbase_47}
+      deadline_stardate: 2372.6
+      nemici:
+        - {tipo: romulani, quantita: 2}
+        - {tipo: klingon, quantita: 2}
+      basi_stellari: 1
+      seed_galassia: 614
+      consiglieri_speciali: []
+      silenti_eventi:
+        - tipo: relitto_trovabile
+          settore: [6, 3]
+          descrizione: "Relitto di una sonda Cardassiana con dati di ricognizione"
+      vittoria_alternativa: null
+
+    - id: CG03
+      prerequisito: CG02_completata
+      nome: "Tempesta nelle Badlands"
+      descrizione_narrativa: |
+        Le informazioni del Gul Durak sono esplosive: una flotta Cardassiana
+        si sta ammassando dietro le Badlands. Dovete attraversare le tempeste
+        al plasma per confermare e trasmettere le coordinate a Comando Flotta.
+        I Borg sono stati avvistati nella zona — la situazione è caotica.
+      obiettivo_testo: "Attraversa le Badlands, conferma la posizione della flotta nemica"
+      obiettivi:
+        - {tipo: investigazione, bersaglio: flotta_cardassiana}
+        - {tipo: sopravvivenza}
+      deadline_stardate: 2373.2
+      nemici:
+        - {tipo: klingon, quantita: 2}
+        - {tipo: borg, quantita: 1}
+      basi_stellari: 0
+      seed_galassia: 777
+      consiglieri_speciali: []
+      silenti_eventi:
+        - {tipo: lettura_anomala, settore: [2, 7], nota: "Picco di neutrini incompatibile con qualsiasi arma conosciuta"}
+      vittoria_alternativa: null
+
+    - id: CG04
+      prerequisito: CG03_completata
+      nome: "Linea Rossa"
+      descrizione_narrativa: |
+        La flotta Cardassiana sta avanzando. L'Ammiraglio Nechayev ordina
+        una linea difensiva al settore Dorvan. Un ambasciatore Vulcaniano
+        tenta un ultimo canale diplomatico. Potete combattere o negoziare,
+        ma non c'è tempo per entrambi.
+      obiettivo_testo: "Difendi il settore Dorvan O negozia il ritiro Cardassiano"
+      obiettivi:
+        - {tipo: distruggi_nemici, specie: klingon, quantita: 3}
+      deadline_stardate: 2373.8
+      nemici:
+        - {tipo: klingon, quantita: 3}
+        - {tipo: romulani, quantita: 1}
+      basi_stellari: 2
+      seed_galassia: 888
+      consiglieri_speciali:
+        - ambasciatore_vulcaniano
+      silenti_eventi: []
+      vittoria_alternativa:
+        tipo: diplomatica
+        condizione: "Trattato di non-aggressione firmato con mediazione Vulcaniana"
+        bonus: "+25 morale equipaggio, +50 dilithium dal commercio"
+
+    - id: CG05
+      prerequisito: CG04_completata
+      nome: "Il Gambetto"
+      descrizione_narrativa: |
+        Era tutto un inganno. I Cardassiani hanno usato la crisi alla DMZ
+        come diversivo mentre i Silenziosi — una razza sconosciuta — si
+        infiltravano nello spazio della Federazione. I dati delle anomalie
+        precedenti ora hanno senso. Siete soli, senza basi, contro un nemico
+        che nessuno conosce. La Federazione dipende da voi.
+      obiettivo_testo: "Sopravvivi e distruggi la nave madre dei Silenziosi"
+      obiettivi:
+        - {tipo: distruggi_nemici, specie: silenti, quantita: 3}
+        - {tipo: sopravvivenza}
+      deadline_stardate: 2374.5
+      nemici:
+        - {tipo: silenti, quantita: 3}
+        - {tipo: klingon, quantita: 1}
+      basi_stellari: 0
+      seed_galassia: 999
+      consiglieri_speciali: []
+      silenti_eventi:
+        - {tipo: primo_contatto}
+        - {tipo: rivelazione_nome}
+      vittoria_alternativa: null

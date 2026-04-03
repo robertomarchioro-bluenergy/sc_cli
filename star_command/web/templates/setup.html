@@ -11,6 +11,23 @@
         <h1>CONFIGURAZIONE</h1>
 
         <div class="setup-section">
+            <h3>Campagna</h3>
+            <div class="option-grid" id="campaign-grid">
+                {% for c in campaigns %}
+                <div class="option-card{% if c.id == 'crisis_of_korvath' %} selected{% endif %}"
+                     data-id="{{ c.id }}" onclick="selectCampaign(this)">
+                    <div class="opt-name">{{ c.nome }}</div>
+                    <div class="opt-stats">
+                        {{ c.missioni }} missioni | {{ c.difficolta }}<br>
+                        Nave suggerita: {{ c.nave_suggerita }}
+                    </div>
+                    <div class="opt-stats" style="margin-top:4px;font-size:0.65rem;color:#888">{{ c.descrizione[:80] }}{% if c.descrizione|length > 80 %}...{% endif %}</div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="setup-section">
             <h3>Nome della nave</h3>
             <input type="text" id="ship-name-input" value="USS Enterprise" autocomplete="off">
         </div>
@@ -47,8 +64,15 @@
     </div>
 
     <script>
+        let selectedCampaign = 'crisis_of_korvath';
         let selectedShip = 'GALAXY';
         let selectedDiff = 'NORMAL';
+
+        function selectCampaign(el) {
+            document.querySelectorAll('#campaign-grid .option-card').forEach(c => c.classList.remove('selected'));
+            el.classList.add('selected');
+            selectedCampaign = el.dataset.id;
+        }
 
         function selectShip(el) {
             document.querySelectorAll('#ship-grid .option-card').forEach(c => c.classList.remove('selected'));
@@ -77,6 +101,7 @@
                         ship_name: shipName,
                         ship_class: selectedShip,
                         difficulty: selectedDiff,
+                        campaign: selectedCampaign,
                     }),
                 });
                 const data = await resp.json();
@@ -86,7 +111,6 @@
                     btn.textContent = 'INIZIA MISSIONE';
                     return;
                 }
-                // Salva stato iniziale per il bridge
                 sessionStorage.setItem('initialState', JSON.stringify(data));
                 window.location.href = '/game';
             } catch (e) {

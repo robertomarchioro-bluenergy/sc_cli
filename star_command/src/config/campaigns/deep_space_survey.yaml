@@ -1,0 +1,105 @@
+campagna:
+  nome: "Survey Spazio Profondo"
+  descrizione: "Una missione scientifica oltre i confini conosciuti della Federazione. Esplorare l'ignoto, catalogare nuovi mondi, sopravvivere alla vastità dello spazio."
+  stardate_inizio: 2375.0
+  difficolta_default: EASY
+  nave_suggerita: Intrepid
+
+  missioni:
+    - id: DS01
+      nome: "Oltre il Confine"
+      descrizione_narrativa: |
+        La USS ha ricevuto l'incarico più ambito della Flotta Stellare:
+        una survey scientifica nella Distesa di Nekrit, oltre i confini
+        esplorati. Centinaia di stelle mai catalogate vi attendono. Ma
+        prima, dovete attraversare una regione di spazio conteso dove i
+        Romulani hanno stabilito avamposti di ascolto non autorizzati.
+      obiettivo_testo: "Attraversa lo spazio Romulano e raggiungi la Distesa di Nekrit"
+      obiettivi:
+        - {tipo: sopravvivenza}
+      deadline_stardate: 2375.8
+      nemici:
+        - {tipo: romulani, quantita: 2}
+      basi_stellari: 1
+      seed_galassia: 4242
+      consiglieri_speciali: []
+      silenti_eventi:
+        - {tipo: lettura_anomala, settore: [3, 7], nota: "Emissione di tachioni da sorgente sconosciuta"}
+      vittoria_alternativa: null
+
+    - id: DS02
+      prerequisito: DS01_completata
+      nome: "Il Pianeta dei Cristalli"
+      descrizione_narrativa: |
+        I sensori hanno rilevato una concentrazione di dilithium senza
+        precedenti su un pianeta classe M nella Distesa. La Federazione
+        ha bisogno disperatamente di quelle risorse. Ma il pianeta orbita
+        in una nebula densa e i sensori sono quasi inutili. Dovrete
+        navigare alla cieca.
+      obiettivo_testo: "Esplora la nebula e cataloga il pianeta dei cristalli"
+      obiettivi:
+        - {tipo: investigazione, bersaglio: pianeta_cristalli}
+      deadline_stardate: 2376.5
+      nemici:
+        - {tipo: klingon, quantita: 1}
+      basi_stellari: 0
+      seed_galassia: 5555
+      consiglieri_speciali: []
+      silenti_eventi:
+        - {tipo: lettura_anomala, settore: [5, 5], nota: "Strutture geometriche regolari sul pianeta — origine non naturale"}
+      vittoria_alternativa: null
+
+    - id: DS03
+      prerequisito: DS02_completata
+      nome: "Primo Contatto"
+      descrizione_narrativa: |
+        Le strutture geometriche sul pianeta dei cristalli non sono naturali.
+        Una civiltà sconosciuta vive nel sottosuolo. Sono pacifici ma
+        terrorizzati: qualcosa li ha quasi sterminati generazioni fa.
+        Lo chiamano "il Silenzio che Divora." Vi chiedono aiuto.
+      obiettivo_testo: "Stabilisci primo contatto pacifico e indaga sulla minaccia"
+      obiettivi:
+        - {tipo: investigazione, bersaglio: civilta_cristallina}
+        - {tipo: investigazione, bersaglio: il_silenzio}
+      deadline_stardate: 2377.2
+      nemici:
+        - {tipo: silenti, quantita: 2}
+      basi_stellari: 0
+      seed_galassia: 6789
+      consiglieri_speciali:
+        - ambasciatore_vulcaniano
+      silenti_eventi:
+        - {tipo: primo_contatto}
+        - tipo: relitto_trovabile
+          settore: [7, 1]
+          descrizione: "Resti di una nave della civiltà cristallina — fori di perforazione sconosciuti"
+      vittoria_alternativa:
+        tipo: diplomatica
+        condizione: "Alleanza con la civiltà cristallina"
+        bonus: "+30 dilithium (dono dei cristallini), +15 morale"
+
+    - id: DS04
+      prerequisito: DS03_completata
+      nome: "La Via del Ritorno"
+      descrizione_narrativa: |
+        I dati raccolti sono di importanza capitale. Dovete tornare nello
+        spazio della Federazione, ma il percorso è ora infestato dai
+        Silenziosi — la stessa entità che ha terrorizzato i cristallini.
+        Nessuna base, nessun rinforzo. Solo la vostra nave, il vostro
+        equipaggio e il buio tra le stelle.
+      obiettivo_testo: "Torna nello spazio della Federazione con i dati intatti"
+      obiettivi:
+        - {tipo: sopravvivenza}
+        - {tipo: distruggi_nemici, specie: silenti, quantita: 2}
+      deadline_stardate: 2378.0
+      nemici:
+        - {tipo: silenti, quantita: 2}
+        - {tipo: romulani, quantita: 1}
+        - {tipo: borg, quantita: 1}
+      basi_stellari: 0
+      seed_galassia: 7777
+      consiglieri_speciali: []
+      silenti_eventi:
+        - {tipo: rivelazione_nome}
+        - {tipo: lettura_anomala, settore: [1, 1], nota: "Varco subspaziale instabile — possibile scorciatoia verso casa"}
+      vittoria_alternativa: null

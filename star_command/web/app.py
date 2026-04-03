@@ -48,11 +48,12 @@ def create_app() -> Flask:
         ship_name = data.get("ship_name", "USS Enterprise")
         ship_class = data.get("ship_class", "GALAXY")
         difficulty = data.get("difficulty", "NORMAL")
+        campaign_id = data.get("campaign", "crisis_of_korvath")
 
         sid = game_manager.create_session()
         session["game_session_id"] = sid
 
-        result = game_manager.start_game(sid, ship_name, ship_class, difficulty)
+        result = game_manager.start_game(sid, ship_name, ship_class, difficulty, campaign_id)
         return jsonify(result)
 
     @app.route("/api/command", methods=["POST"])
