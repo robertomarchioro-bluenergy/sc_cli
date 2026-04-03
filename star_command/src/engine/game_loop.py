@@ -507,11 +507,40 @@ def _execute_scan(game_state: GameState, presenter: PresenterInterface) -> None:
         return
 
     game_state.galaxy.scan_quadrant(q_row, q_col)
+    game_state.galaxy.update_adjacent_visibility(q_row, q_col)
     summary = game_state.galaxy.get_quadrant_summary(q_row, q_col)
+
+    # Formatta risultati scansione in modo leggibile
+    label_map = {
+        "KLINGON": ("Klingon", "red"),
+        "ROMULAN": ("Romulani", "magenta"),
+        "BORG": ("Borg", "red"),
+        "SILENTI": ("Silenziosi", "red"),
+        "STARBASE": ("Basi stellari", "green"),
+        "STAR": ("Stelle", "yellow"),
+        "PLANET": ("Pianeti", "blue"),
+        "ANOMALY": ("Anomalie", "cyan"),
+        "NEBULA": ("Nebule", "cyan"),
+        "SILENTI_WRECK": ("Relitti", "yellow"),
+    }
+
     presenter.show_narrative_short(
-        f"Scansione Q({q_row},{q_col}): {summary}",
+        f"Scansione quadrante ({q_row},{q_col}) completata.",
         color="blue",
     )
+    nebula = "Si" if summary.get("is_nebula") else "No"
+    presenter.show_narrative_short(f"  Nebula: {nebula}", color="cyan")
+
+    found_anything = False
+    for key, (label, color) in label_map.items():
+        count = summary.get(key, 0)
+        if count > 0:
+            presenter.show_narrative_short(f"  {label}: {count}", color=color)
+            found_anything = True
+
+    if not found_anything:
+        presenter.show_narrative_short("  Nessuna entita rilevata.", color="dim")
+
     game_state.stardate += 0.05
 
 
