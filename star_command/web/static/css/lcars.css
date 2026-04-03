@@ -594,20 +594,23 @@ body {
 
 .setup-page {
     max-width: 700px;
-    margin: 40px auto;
-    padding: 20px;
+    margin: 0 auto;
+    padding: 20px 20px 40px;
+    height: 100vh;
+    overflow-y: auto;
 }
 
 .setup-page h1 {
     color: var(--lcars-gold);
-    font-size: 2rem;
+    font-size: 1.6rem;
     letter-spacing: 4px;
     text-align: center;
-    margin-bottom: 32px;
+    margin-bottom: 16px;
+    padding-top: 16px;
 }
 
 .setup-section {
-    margin-bottom: 24px;
+    margin-bottom: 16px;
 }
 
 .setup-section h3 {
@@ -643,7 +646,7 @@ body {
     background: #0a0a18;
     border: 2px solid #222;
     border-radius: 12px;
-    padding: 12px;
+    padding: 10px;
     cursor: pointer;
     transition: border-color 0.2s, background 0.2s;
     text-align: center;
@@ -657,21 +660,22 @@ body {
     background: #1a1a10;
 }
 .option-card .opt-name {
-    font-size: 1rem;
+    font-size: 0.9rem;
     color: var(--lcars-gold);
     font-weight: 700;
 }
 .option-card .opt-stats {
-    font-size: 0.7rem;
+    font-size: 0.65rem;
     color: var(--lcars-text-dim);
-    margin-top: 4px;
-    line-height: 1.4;
+    margin-top: 2px;
+    line-height: 1.3;
 }
 
 .start-btn {
     display: block;
     width: 100%;
     padding: 14px;
+    margin-top: 8px;
     background: var(--lcars-amber);
     color: #000;
     border: none;
