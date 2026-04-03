@@ -60,9 +60,10 @@ class TestParseNavigationCommands:
     """Test comandi navigazione"""
 
     def test_warp(self):
-        result = parse("warp 3")
+        result = parse("warp 3 5")
         assert result.action == CommandAction.NAVIGATE_WARP
-        assert result.params.get("speed") == 3
+        assert result.params.get("q_row") == 3
+        assert result.params.get("q_col") == 5
 
     def test_impulse(self):
         result = parse("impulso 5 3")
