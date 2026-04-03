@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cd:*)",
+      "Bash(where python3.12)",
+      "Bash(where python3.11)",
+      "Bash(ls /c/Python*/python.exe)",
+      "Bash(ls /c/Users/roberto.marchioro/AppData/Local/Programs/Python/*/python.exe)",
+      "Bash(py --version)",
+      "Read(//c/Users/roberto.marchioro/**)",
+      "Read(//c/ProgramData/anaconda3/**)",
+      "Bash(py -c ':*)",
+      "Bash(py -m pytest tests/ -v --tb=short)"
+    ]
+  }
+}

@@ -1,0 +1,94 @@
+campagna:
+  nome: "La Crisi di Korvath"
+  descrizione: "Una serie di incidenti al confine rivela una minaccia sconosciuta."
+  stardate_inizio: 2347.1
+  difficolta_default: NORMAL
+  nave_suggerita: Constitution
+
+  missioni:
+    - id: M01
+      nome: "Pattuglia di Frontiera"
+      descrizione_narrativa: |
+        Ordini da Comando Flotta: pattugliare il confine del settore Korvath
+        e neutralizzare la presenza Klingon. Tre caccia sono stati segnalati.
+        Non complicare le cose.
+      obiettivo_testo: "Elimina 3 navi Klingon nel settore di confine"
+      obiettivi:
+        - {tipo: distruggi_nemici, specie: klingon, quantita: 3}
+      deadline_stardate: 2347.8
+      nemici:
+        - {tipo: klingon, quantita: 3}
+      basi_stellari: 1
+      seed_galassia: 42
+      consiglieri_speciali: []
+      silenti_eventi:
+        - {tipo: lettura_anomala, settore: [7, 8], nota: "Anomalia non classificata"}
+      vittoria_alternativa: null
+
+    - id: M02
+      prerequisito: M01_completata
+      nome: "Il Prezzo della Vittoria"
+      descrizione_narrativa: |
+        Una nave civile, la SS Copernicus, è stata intercettata da una pattuglia
+        Romulana. 240 civili a bordo. Scortarla alla Base Stellare 12.
+        Nel tragitto potreste trovare qualcosa di inquietante.
+      obiettivo_testo: "Scortare SS Copernicus alla Base Stellare 12"
+      obiettivi:
+        - {tipo: scorta, bersaglio: ss_copernicus, destinazione: starbase_12}
+      deadline_stardate: 2348.5
+      nemici:
+        - {tipo: romulani, quantita: 2}
+        - {tipo: klingon, quantita: 1}
+      basi_stellari: 1
+      seed_galassia: 107
+      consiglieri_speciali: []
+      silenti_eventi:
+        - tipo: relitto_trovabile
+          settore: [3, 6]
+          descrizione: "Relitto nave Klingon — cause del danno sconosciute"
+      vittoria_alternativa: null
+
+    - id: M03
+      prerequisito: M02_completata
+      nome: "Ombre nel Silenzio"
+      descrizione_narrativa: |
+        Una pattuglia della Federazione è sparita senza segnali di soccorso.
+        Nessuna firma di combattimento nota sui sensori. Solo silenzio.
+      obiettivo_testo: "Investigare la sparizione della pattuglia Sigma-7"
+      obiettivi:
+        - {tipo: investigazione, bersaglio: pattuglia_sigma7}
+        - {tipo: sopravvivenza}
+      deadline_stardate: 2349.0
+      nemici:
+        - {tipo: silenti, quantita: 2}
+      basi_stellari: 0
+      seed_galassia: 215
+      consiglieri_speciali: []
+      silenti_eventi:
+        - {tipo: primo_contatto}
+      vittoria_alternativa: null
+
+    - id: M04
+      prerequisito: M03_completata
+      nome: "L'Ambasciatore di Vulcano"
+      descrizione_narrativa: |
+        Un ambasciatore Vulcaniano a bordo propone la via diplomatica con
+        i Klingon. Nel frattempo i dati del relitto potrebbero svelare chi
+        ha attaccato la pattuglia Sigma-7.
+      obiettivo_testo: "Recupera dati dal relitto O stringi alleanza con i Klingon"
+      obiettivi:
+        - {tipo: recupero_dati, bersaglio: relitto_silenzioso}
+      deadline_stardate: 2349.8
+      nemici:
+        - {tipo: klingon, quantita: 1}
+        - {tipo: silenti, quantita: 1}
+      basi_stellari: 1
+      seed_galassia: 331
+      consiglieri_speciali:
+        - ambasciatore_vulcaniano
+      silenti_eventi:
+        - {tipo: rivelazione_nome}
+      vittoria_alternativa:
+        tipo: diplomatica
+        condizione: "Klingon alleati tramite mediazione Vulcaniana"
+        bonus: "+20 morale equipaggio, +30 dilithium da Klingon"

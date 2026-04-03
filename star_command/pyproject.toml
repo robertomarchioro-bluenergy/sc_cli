@@ -1,0 +1,9 @@
+[project]
+name = "star-command"
+version = "0.1.0"
+description = "CLI Star Trek strategy game with AI officers powered by Claude"
+requires-python = ">=3.10"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
