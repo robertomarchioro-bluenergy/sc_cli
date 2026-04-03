@@ -36,9 +36,17 @@ LOG_FORMAT = "%(asctime)s %(name)s [%(levelname)s] %(message)s"
 
 
 def setup_logging(level_str: str) -> None:
-    """Configura il logging globale"""
+    """Configura il logging globale — scrive su file, non su console."""
     level = getattr(logging, level_str.upper(), logging.INFO)
-    logging.basicConfig(level=level, format=LOG_FORMAT)
+    log_file = Path(__file__).parent / "star_command.log"
+    logging.basicConfig(
+        level=level,
+        format=LOG_FORMAT,
+        filename=str(log_file),
+        filemode="w",
+    )
+    # Silenzia il logging verboso di httpx (logga ogni singola HTTP request)
+    logging.getLogger("httpx").setLevel(logging.WARNING)
 
 
 def create_anthropic_client(api_key: str | None):
