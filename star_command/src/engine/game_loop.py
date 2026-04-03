@@ -399,6 +399,9 @@ def _execute_fire_phaser(
         if target.is_destroyed():
             msg += " — DISTRUTTO!"
             game_state.enemies_in_sector.remove(target)
+            # Rimuovi dalla mappa galattica
+            eq, ec, er, ecc = target.position
+            game_state.galaxy.set_sector(eq, ec, er, ecc, CellContent.EMPTY)
         presenter.show_narrative_short(msg, color="green")
     else:
         presenter.show_narrative_short("Faser: MANCATO!", color="red")
@@ -442,6 +445,8 @@ def _execute_fire_torpedo(
     if target.is_destroyed():
         msg += " — DISTRUTTO!"
         game_state.enemies_in_sector.remove(target)
+        eq, ec, er, ecc = target.position
+        game_state.galaxy.set_sector(eq, ec, er, ecc, CellContent.EMPTY)
     presenter.show_narrative_short(msg, color="green")
 
     game_state.stardate += 0.1
@@ -814,6 +819,8 @@ def run_game_loop(
                         presenter.show_narrative_short(result.message, color="yellow")
                 elif action == CombatAction.RETREAT:
                     game_state.enemies_in_sector.remove(enemy)
+                    eq, ec, er, ecc = enemy.position
+                    game_state.galaxy.set_sector(eq, ec, er, ecc, CellContent.EMPTY)
                     presenter.show_narrative_short(
                         f"{enemy.enemy_type.name} si ritira dal combattimento!",
                         color="amber",
