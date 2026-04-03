@@ -20,7 +20,7 @@ from .combat import (
 )
 from .navigation import navigate_warp, navigate_impulse
 from .difficulty import DifficultyConfig
-from .captain_log import CaptainLog, LogTrigger, check_log_triggers
+from .captain_log import CaptainLog, LogTrigger, check_log_triggers, OfficerAPIError
 from .campaign import MissionConfig, CampaignState, save_campaign_state
 from . import command_parser
 from .command_parser import CommandAction, ParsedCommand
@@ -281,7 +281,14 @@ def execute_command(
         role = role_map.get(action, "tattico")
         officer = officers.get(role)
         if officer:
-            response = officer.respond(game_state.to_dict(), trigger="called")
+            try:
+                response = officer.respond(game_state.to_dict(), trigger="called")
+            except (OfficerAPIError, Exception) as e:
+                logger.warning("API non disponibile per %s: %s", officer.name, e)
+                response = None
+                presenter.show_narrative_short(
+                    f"[Comunicatore offline] {officer.name} non raggiungibile.", color="yellow"
+                )
             if response:
                 presenter.show_officer_message(officer.name, role, response, officer.trust)
         else:
@@ -540,7 +547,11 @@ def _execute_crew_meeting(
     """Convoca riunione dell'equipaggio — tutti gli ufficiali parlano"""
     presenter.show_narrative_short("── Riunione dell'equipaggio in corso ──", color="amber")
     for role, officer in officers.items():
-        response = officer.respond(game_state.to_dict(), trigger="called")
+        try:
+            response = officer.respond(game_state.to_dict(), trigger="called")
+        except (OfficerAPIError, Exception) as e:
+            logger.warning("API non disponibile per %s: %s", officer.name, e)
+            response = None
         if response:
             presenter.show_officer_message(officer.name, role, response, officer.trust)
 
@@ -642,7 +653,11 @@ def run_game_loop(
         context = game_state.get_context()
         active_officer = get_active_officer(context, officers)
         if active_officer:
-            advice = active_officer.respond(game_state.to_dict(), trigger="auto")
+            try:
+                advice = active_officer.respond(game_state.to_dict(), trigger="auto")
+            except (OfficerAPIError, Exception) as e:
+                logger.warning("API non disponibile per %s: %s", active_officer.name, e)
+                advice = None
             if advice:
                 game_state.last_advice = AdviceRecord(
                     officer_role=active_officer.role,
