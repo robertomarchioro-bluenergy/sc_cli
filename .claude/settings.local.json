@@ -10,7 +10,10 @@
       "Read(//c/Users/roberto.marchioro/**)",
       "Read(//c/ProgramData/anaconda3/**)",
       "Bash(py -c ':*)",
-      "Bash(py -m pytest tests/ -v --tb=short)"
+      "Bash(py -m pytest tests/ -v --tb=short)",
+      "Bash(gh repo:*)",
+      "Bash(where gh:*)",
+      "mcp__plugin_github_github__create_repository"
     ]
   }
 }
