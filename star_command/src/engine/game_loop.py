@@ -714,7 +714,7 @@ def run_game_loop(
                 )
                 presenter.show_officer_message(
                     active_officer.name,
-                    active_officer.role,
+                    active_officer.role.value,
                     advice,
                     active_officer.trust,
                 )
