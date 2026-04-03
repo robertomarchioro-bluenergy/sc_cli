@@ -13,7 +13,17 @@
       "Bash(py -m pytest tests/ -v --tb=short)",
       "Bash(gh repo:*)",
       "Bash(where gh:*)",
-      "mcp__plugin_github_github__create_repository"
+      "mcp__plugin_github_github__create_repository",
+      "Bash(py -m pytest tests/test_engine/test_command_parser.py -v --tb=short)",
+      "Bash(py -m pytest tests/test_presentation/test_cli_lcars.py -v --tb=short)",
+      "Bash(mkdir:*)",
+      "Bash(py -c \"from src.presentation.web_presenter import WebPresenter; print\\('WebPresenter OK'\\)\")",
+      "Bash(py -c \"import flask; print\\('Flask', flask.__version__\\)\")",
+      "Bash(py -m pip install flask --quiet)",
+      "Bash(py -c \"from web.app import create_app; app = create_app\\(\\); print\\('Flask app OK'\\)\")",
+      "Bash(py -m pytest tests/ --tb=short)",
+      "Bash(python -m pytest tests/ -x -q)",
+      "Bash(wsl bash:*)"
     ]
   }
 }
