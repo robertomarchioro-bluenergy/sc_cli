@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Star Command — Setup</title>
+    <link rel="stylesheet" href="/static/css/lcars.css">
+</head>
+<body>
+    <div class="setup-page">
+        <h1>CONFIGURAZIONE</h1>
+
+        <div class="setup-section">
+            <h3>Nome della nave</h3>
+            <input type="text" id="ship-name-input" value="USS Enterprise" autocomplete="off">
+        </div>
+
+        <div class="setup-section">
+            <h3>Classe nave</h3>
+            <div class="option-grid" id="ship-grid">
+                {% for ship in ships %}
+                <div class="option-card{% if ship.id == 'GALAXY' %} selected{% endif %}"
+                     data-id="{{ ship.id }}" onclick="selectShip(this)">
+                    <div class="opt-name">{{ ship.label }}</div>
+                    <div class="opt-stats">
+                        Crew {{ ship.crew }} | Energy {{ ship.energy }}<br>
+                        Shields {{ ship.shields }} | Torpedoes {{ ship.torpedoes }}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="setup-section">
+            <h3>Difficolta</h3>
+            <div class="option-grid" id="diff-grid">
+                {% for d in difficulties %}
+                <div class="option-card{% if d.id == 'NORMAL' %} selected{% endif %}"
+                     data-id="{{ d.id }}" onclick="selectDiff(this)">
+                    <div class="opt-name">{{ d.label }}</div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <button class="start-btn" id="start-btn" onclick="startGame()">INIZIA MISSIONE</button>
+    </div>
+
+    <script>
+        let selectedShip = 'GALAXY';
+        let selectedDiff = 'NORMAL';
+
+        function selectShip(el) {
+            document.querySelectorAll('#ship-grid .option-card').forEach(c => c.classList.remove('selected'));
+            el.classList.add('selected');
+            selectedShip = el.dataset.id;
+        }
+
+        function selectDiff(el) {
+            document.querySelectorAll('#diff-grid .option-card').forEach(c => c.classList.remove('selected'));
+            el.classList.add('selected');
+            selectedDiff = el.dataset.id;
+        }
+
+        async function startGame() {
+            const btn = document.getElementById('start-btn');
+            btn.disabled = true;
+            btn.textContent = 'INIZIALIZZAZIONE...';
+
+            const shipName = document.getElementById('ship-name-input').value || 'USS Enterprise';
+
+            try {
+                const resp = await fetch('/api/start', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        ship_name: shipName,
+                        ship_class: selectedShip,
+                        difficulty: selectedDiff,
+                    }),
+                });
+                const data = await resp.json();
+                if (data.error) {
+                    alert('Errore: ' + data.error);
+                    btn.disabled = false;
+                    btn.textContent = 'INIZIA MISSIONE';
+                    return;
+                }
+                // Salva stato iniziale per il bridge
+                sessionStorage.setItem('initialState', JSON.stringify(data));
+                window.location.href = '/game';
+            } catch (e) {
+                alert('Errore di connessione: ' + e.message);
+                btn.disabled = false;
+                btn.textContent = 'INIZIA MISSIONE';
+            }
+        }
+    </script>
+</body>
+</html>

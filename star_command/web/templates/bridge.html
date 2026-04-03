@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Star Command — Bridge</title>
+    <link rel="stylesheet" href="/static/css/lcars.css">
+</head>
+<body>
+    <div class="lcars-layout">
+        <!-- Sidebar LCARS -->
+        <div class="lcars-sidebar">
+            <div class="seg"></div>
+            <div class="seg blue"></div>
+            <div class="seg purple"></div>
+            <div class="seg tan"></div>
+            <div class="seg"></div>
+        </div>
+
+        <!-- Header -->
+        <div class="lcars-header">
+            <span class="title">STAR COMMAND</span>
+            <span class="stardate" id="stardate">SD 2347.10</span>
+            <span class="context-badge NAVIGATION" id="context-badge">NAVIGATION</span>
+            <span class="turn" id="turn-display">T0</span>
+        </div>
+
+        <!-- Viewport (HUD / Map / Systems) -->
+        <div class="lcars-viewport" id="viewport">
+            <!-- Ship HUD (default view) -->
+            <div class="ship-hud" id="hud-view">
+                <div class="ship-name" id="ship-name">USS Enterprise (Galaxy)</div>
+
+                <div class="hud-row">
+                    <span class="label">Scafo</span>
+                    <div class="bar-gauge"><div class="fill" id="hull-bar" style="width:100%;background:var(--bar-green)"></div><span class="pct" id="hull-pct">100%</span></div>
+                </div>
+                <div class="hud-row">
+                    <span class="label">Scudi</span>
+                    <div class="bar-gauge"><div class="fill" id="shields-bar" style="width:100%;background:var(--bar-cyan)"></div><span class="pct" id="shields-pct">100%</span></div>
+                </div>
+                <div class="hud-row">
+                    <span class="label">Energia</span>
+                    <div class="bar-gauge"><div class="fill" id="energy-bar" style="width:100%;background:var(--bar-blue)"></div><span class="pct" id="energy-pct">100%</span></div>
+                    <span class="value" id="energy-val">8000/8000</span>
+                </div>
+                <div class="hud-row">
+                    <span class="label">Siluri</span>
+                    <span class="value" id="torpedoes-val">35/35</span>
+                    <span class="label" style="width:auto;margin-left:12px">Dilithium</span>
+                    <span class="value" id="dilithium-val">200/200</span>
+                </div>
+                <div class="hud-row">
+                    <span class="label">Equipaggio</span>
+                    <span class="value" id="crew-val">1014/1014</span>
+                    <span class="label" style="width:auto;margin-left:12px">Morale</span>
+                    <div class="bar-gauge" style="max-width:120px"><div class="fill" id="morale-bar" style="width:85%;background:var(--bar-green)"></div><span class="pct" id="morale-pct">85%</span></div>
+                </div>
+                <div class="hud-row">
+                    <span class="label">Posizione</span>
+                    <span class="value" id="position-val">Q(1,1) S(4,4)</span>
+                </div>
+                <div class="hud-row" id="mission-row">
+                    <span class="label">Missione</span>
+                    <span class="value" id="mission-val" style="font-size:0.8rem"></span>
+                </div>
+                <div class="hud-row" id="enemies-row" style="display:none">
+                    <span class="label" style="color:var(--lcars-red)">Nemici</span>
+                    <span class="value" id="enemies-val" style="color:var(--lcars-red);font-weight:700"></span>
+                </div>
+            </div>
+
+            <!-- Galaxy Map (toggled) -->
+            <div class="map-container" id="map-view">
+                <button class="map-close-btn" onclick="closeMap()">CHIUDI</button>
+                <div class="map-title">MAPPA GALATTICA</div>
+                <div class="galaxy-grid" id="galaxy-grid"></div>
+                <div class="map-title" id="sector-title" style="margin-top:8px">QUADRANTE (1,1) — SETTORI</div>
+                <div class="sector-grid" id="sector-grid"></div>
+                <div class="map-legend">K=Klingon R=Romulano !=Borg X=Silenti B=Base *=Stella ?=Anomalia ~=Nebula P=Pianeta E=Nave</div>
+            </div>
+
+            <!-- Systems overlay (toggled) -->
+            <div class="systems-container" id="systems-view">
+                <button class="map-close-btn" onclick="closeSystems()">CHIUDI</button>
+                <div class="map-title">SISTEMI DI BORDO</div>
+                <div id="systems-list"></div>
+            </div>
+        </div>
+
+        <!-- Officers Panel -->
+        <div class="lcars-officers" id="officers-panel">
+            <div style="color:var(--lcars-text-dim);font-size:0.75rem;letter-spacing:1px;text-transform:uppercase">Ufficiali</div>
+        </div>
+
+        <!-- Narrative Log -->
+        <div class="lcars-narrative" id="narrative-log"></div>
+
+        <!-- Command Input -->
+        <div class="lcars-command">
+            <span class="prompt-label">Capitano</span>
+            <input type="text" id="command-input" placeholder="Inserisci comando..." autocomplete="off">
+            <span class="spinner" id="spinner">ELABORAZIONE...</span>
+            <button class="send-btn" id="send-btn" onclick="sendCommand()">INVIA</button>
+        </div>
+    </div>
+
+    <!-- Confirm Modal -->
+    <div class="confirm-overlay" id="confirm-overlay">
+        <div class="confirm-box">
+            <div class="confirm-msg" id="confirm-msg">Conferma?</div>
+            <div class="confirm-btns">
+                <button class="btn-yes" onclick="sendConfirm(true)">SI</button>
+                <button class="btn-no" onclick="sendConfirm(false)">NO</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Briefing overlay -->
+    <div class="briefing-overlay" id="briefing-overlay">
+        <div class="briefing-box">
+            <h2 id="briefing-title">BRIEFING</h2>
+            <div class="briefing-desc" id="briefing-desc"></div>
+            <div class="briefing-obj" id="briefing-obj"></div>
+            <div class="briefing-deadline" id="briefing-deadline"></div>
+            <button onclick="closeBriefing()">INIZIA MISSIONE</button>
+        </div>
+    </div>
+
+    <!-- Game Over overlay -->
+    <div class="gameover-overlay" id="gameover-overlay">
+        <div class="gameover-box" id="gameover-box">
+            <h2 id="gameover-title">MISSIONE</h2>
+            <div class="reason" id="gameover-reason"></div>
+            <button onclick="window.location.href='/'">MENU PRINCIPALE</button>
+        </div>
+    </div>
+
+    <script src="/static/js/game.js"></script>
+</body>
+</html>

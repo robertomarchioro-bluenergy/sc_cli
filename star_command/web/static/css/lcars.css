@@ -1,0 +1,730 @@
+/* ── LCARS Theme — Star Command ─────────────────── */
+
+@import url('https://fonts.googleapis.com/css2?family=Antonio:wght@400;700&display=swap');
+
+:root {
+    --lcars-amber:    #FF9900;
+    --lcars-gold:     #FFCC66;
+    --lcars-blue:     #9999FF;
+    --lcars-purple:   #CC99CC;
+    --lcars-red:      #CC6666;
+    --lcars-orange:   #FF9966;
+    --lcars-tan:      #FFCC99;
+    --lcars-bg:       #000000;
+    --lcars-text:     #FF9900;
+    --lcars-text-dim: #997744;
+    --lcars-panel-bg: #0a0a12;
+
+    --ctx-combat:     #CC6666;
+    --ctx-navigation: #9999FF;
+    --ctx-docked:     #66CC66;
+    --ctx-exploration: #6699FF;
+    --ctx-diplomacy:  #CC99CC;
+
+    --bar-green:  #66CC66;
+    --bar-yellow: #CCCC33;
+    --bar-red:    #CC3333;
+    --bar-blue:   #6699FF;
+    --bar-cyan:   #33CCCC;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: 'Antonio', 'Trebuchet MS', sans-serif;
+    background: var(--lcars-bg);
+    color: var(--lcars-text);
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* ── LCARS Main Layout ──────────────────────────── */
+
+.lcars-layout {
+    display: grid;
+    grid-template-columns: 50px 1fr 280px;
+    grid-template-rows: 52px 1fr 160px 48px;
+    grid-template-areas:
+        "sidebar header    header"
+        "sidebar viewport  officers"
+        "sidebar narrative narrative"
+        "sidebar command   command";
+    height: 100vh;
+    gap: 2px;
+    padding: 2px;
+}
+
+/* ── Sidebar (barra verticale LCARS) ────────────── */
+
+.lcars-sidebar {
+    grid-area: sidebar;
+    background: var(--lcars-amber);
+    border-radius: 24px 0 0 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 2px 0;
+}
+
+.lcars-sidebar .seg {
+    flex: 1;
+    background: var(--lcars-amber);
+}
+.lcars-sidebar .seg:first-child { border-radius: 24px 0 0 0; }
+.lcars-sidebar .seg:last-child  { border-radius: 0 0 0 24px; }
+.lcars-sidebar .seg.blue   { background: var(--lcars-blue); }
+.lcars-sidebar .seg.purple { background: var(--lcars-purple); }
+.lcars-sidebar .seg.tan    { background: var(--lcars-tan); }
+.lcars-sidebar .seg.red    { background: var(--lcars-red); }
+
+/* ── Header ─────────────────────────────────────── */
+
+.lcars-header {
+    grid-area: header;
+    background: var(--lcars-panel-bg);
+    border-top: 4px solid var(--lcars-amber);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    gap: 12px;
+}
+
+.lcars-header .title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--lcars-gold);
+}
+
+.lcars-header .stardate {
+    font-size: 1.2rem;
+    color: var(--lcars-amber);
+}
+
+.lcars-header .context-badge {
+    padding: 4px 16px;
+    border-radius: 12px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #000;
+    background: var(--ctx-navigation);
+}
+.lcars-header .context-badge.COMBAT     { background: var(--ctx-combat); }
+.lcars-header .context-badge.NAVIGATION { background: var(--ctx-navigation); }
+.lcars-header .context-badge.DOCKED     { background: var(--ctx-docked); }
+.lcars-header .context-badge.EXPLORATION{ background: var(--ctx-exploration); }
+.lcars-header .context-badge.DIPLOMACY  { background: var(--ctx-diplomacy); }
+
+.lcars-header .turn {
+    font-size: 0.9rem;
+    color: var(--lcars-text-dim);
+}
+
+/* ── Viewport (area principale) ─────────────────── */
+
+.lcars-viewport {
+    grid-area: viewport;
+    background: var(--lcars-panel-bg);
+    border-left: 2px solid var(--lcars-amber);
+    padding: 12px;
+    overflow-y: auto;
+    position: relative;
+}
+
+/* Ship HUD */
+.ship-hud { display: flex; flex-direction: column; gap: 6px; }
+.ship-hud .ship-name {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--lcars-gold);
+    letter-spacing: 2px;
+}
+
+.hud-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    height: 24px;
+}
+.hud-row .label {
+    width: 90px;
+    text-align: right;
+    font-size: 0.85rem;
+    color: var(--lcars-tan);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+.hud-row .value {
+    font-size: 0.85rem;
+    color: var(--lcars-gold);
+}
+
+/* Bar gauge */
+.bar-gauge {
+    flex: 1;
+    max-width: 300px;
+    height: 16px;
+    background: #1a1a2e;
+    border-radius: 8px;
+    overflow: hidden;
+    position: relative;
+}
+.bar-gauge .fill {
+    height: 100%;
+    border-radius: 8px;
+    transition: width 0.5s ease;
+}
+.bar-gauge .pct {
+    position: absolute;
+    right: 6px;
+    top: 0;
+    line-height: 16px;
+    font-size: 0.7rem;
+    color: #fff;
+    text-shadow: 0 0 3px #000;
+}
+
+/* ── Galaxy Map ─────────────────────────────────── */
+
+.map-container {
+    display: none;
+    flex-direction: column;
+    gap: 12px;
+}
+.map-container.active { display: flex; }
+
+.map-title {
+    font-size: 1.1rem;
+    color: var(--lcars-gold);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+.galaxy-grid, .sector-grid {
+    display: grid;
+    gap: 1px;
+    background: #111;
+}
+.galaxy-grid {
+    grid-template-columns: 28px repeat(8, 1fr);
+    grid-template-rows: 24px repeat(8, 1fr);
+}
+.sector-grid {
+    grid-template-columns: 24px repeat(8, 1fr);
+    grid-template-rows: 20px repeat(8, 1fr);
+}
+
+.grid-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+    color: var(--lcars-tan);
+    background: #0a0a12;
+}
+
+.galaxy-cell {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.65rem;
+    padding: 2px;
+    background: #0a0a18;
+    min-height: 32px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+.galaxy-cell:hover { background: #1a1a30; }
+.galaxy-cell.current { background: #1a3a1a; border: 1px solid var(--bar-green); }
+.galaxy-cell.unknown { color: #333; }
+.galaxy-cell.scanned { color: var(--lcars-gold); }
+
+.sector-cell {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    font-weight: 700;
+    background: #08080f;
+    min-height: 28px;
+}
+.sector-cell.ship  { background: #1a3a1a; color: #fff; }
+.sector-cell.enemy { color: var(--lcars-red); }
+.sector-cell.star  { color: #CCCC33; }
+.sector-cell.base  { color: var(--bar-green); }
+.sector-cell.anomaly { color: var(--bar-cyan); }
+.sector-cell.nebula  { color: #336666; }
+.sector-cell.planet  { color: var(--bar-blue); }
+.sector-cell.empty   { color: #222; }
+
+.map-legend {
+    font-size: 0.75rem;
+    color: var(--lcars-text-dim);
+    letter-spacing: 1px;
+}
+
+.map-close-btn {
+    position: absolute;
+    top: 8px;
+    right: 12px;
+    background: var(--lcars-red);
+    color: #000;
+    border: none;
+    border-radius: 8px;
+    padding: 4px 12px;
+    cursor: pointer;
+    font-family: inherit;
+    font-weight: 700;
+    font-size: 0.8rem;
+}
+
+/* ── Systems overlay ────────────────────────────── */
+
+.systems-container { display: none; flex-direction: column; gap: 6px; }
+.systems-container.active { display: flex; }
+
+.system-row {
+    display: grid;
+    grid-template-columns: 160px 1fr 60px 60px;
+    align-items: center;
+    gap: 8px;
+    padding: 3px 0;
+    border-bottom: 1px solid #1a1a2e;
+}
+.system-row .sys-name { color: var(--lcars-gold); font-size: 0.85rem; text-transform: uppercase; }
+.system-row .sys-status { font-size: 0.8rem; text-align: center; }
+.system-row .sys-penalty { font-size: 0.75rem; color: var(--lcars-text-dim); text-align: right; }
+
+/* ── Officers Panel ─────────────────────────────── */
+
+.lcars-officers {
+    grid-area: officers;
+    background: var(--lcars-panel-bg);
+    border-left: 2px solid var(--lcars-purple);
+    padding: 10px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.officer-msg {
+    border-radius: 8px;
+    padding: 8px 10px;
+    font-size: 0.82rem;
+    line-height: 1.4;
+    border-left: 3px solid var(--lcars-amber);
+}
+.officer-msg .officer-name {
+    font-weight: 700;
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 3px;
+}
+.officer-msg .officer-trust {
+    font-size: 0.65rem;
+    color: var(--lcars-text-dim);
+    margin-top: 4px;
+}
+.officer-msg.tattico  { border-left-color: var(--lcars-red); }
+.officer-msg.ingegnere { border-left-color: var(--lcars-amber); }
+.officer-msg.scientifico { border-left-color: var(--lcars-blue); }
+.officer-msg.medico   { border-left-color: var(--bar-cyan); }
+.officer-msg.speciale { border-left-color: var(--lcars-purple); }
+.officer-msg .officer-name.tattico  { color: var(--lcars-red); }
+.officer-msg .officer-name.ingegnere { color: var(--lcars-amber); }
+.officer-msg .officer-name.scientifico { color: var(--lcars-blue); }
+.officer-msg .officer-name.medico   { color: var(--bar-cyan); }
+.officer-msg .officer-name.speciale { color: var(--lcars-purple); }
+
+/* ── Narrative Log ──────────────────────────────── */
+
+.lcars-narrative {
+    grid-area: narrative;
+    background: var(--lcars-panel-bg);
+    border-top: 2px solid var(--lcars-blue);
+    padding: 8px 14px;
+    overflow-y: auto;
+    font-size: 0.82rem;
+    line-height: 1.5;
+}
+
+.narr-entry {
+    padding: 2px 0;
+}
+.narr-entry.red     { color: var(--lcars-red); }
+.narr-entry.green   { color: var(--bar-green); }
+.narr-entry.blue    { color: var(--lcars-blue); }
+.narr-entry.cyan    { color: var(--bar-cyan); }
+.narr-entry.yellow  { color: var(--lcars-amber); }
+.narr-entry.amber   { color: var(--lcars-amber); }
+.narr-entry.magenta { color: var(--lcars-purple); }
+.narr-entry.dim     { color: var(--lcars-text-dim); }
+.narr-entry.white   { color: #ccc; }
+
+/* ── Command Input ──────────────────────────────── */
+
+.lcars-command {
+    grid-area: command;
+    background: var(--lcars-panel-bg);
+    border-top: 3px solid var(--lcars-amber);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 12px;
+}
+
+.lcars-command .prompt-label {
+    color: var(--lcars-gold);
+    font-weight: 700;
+    font-size: 0.95rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.lcars-command input {
+    flex: 1;
+    background: #0a0a18;
+    border: 1px solid #333;
+    border-radius: 8px;
+    color: var(--lcars-gold);
+    font-family: inherit;
+    font-size: 1rem;
+    padding: 6px 12px;
+    outline: none;
+}
+.lcars-command input:focus {
+    border-color: var(--lcars-amber);
+    box-shadow: 0 0 6px rgba(255, 153, 0, 0.3);
+}
+.lcars-command input:disabled {
+    opacity: 0.4;
+}
+
+.lcars-command .send-btn {
+    background: var(--lcars-amber);
+    color: #000;
+    border: none;
+    border-radius: 8px;
+    padding: 6px 16px;
+    font-family: inherit;
+    font-weight: 700;
+    font-size: 0.85rem;
+    cursor: pointer;
+    letter-spacing: 1px;
+}
+.lcars-command .send-btn:hover { background: var(--lcars-gold); }
+.lcars-command .send-btn:disabled { opacity: 0.4; cursor: default; }
+
+/* ── Confirm Modal ──────────────────────────────── */
+
+.confirm-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+}
+.confirm-overlay.active { display: flex; }
+
+.confirm-box {
+    background: var(--lcars-panel-bg);
+    border: 2px solid var(--lcars-amber);
+    border-radius: 16px;
+    padding: 24px 32px;
+    text-align: center;
+    max-width: 400px;
+}
+.confirm-box .confirm-msg {
+    font-size: 1.1rem;
+    color: var(--lcars-gold);
+    margin-bottom: 16px;
+}
+.confirm-box .confirm-btns {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+}
+.confirm-box button {
+    padding: 8px 24px;
+    border: none;
+    border-radius: 8px;
+    font-family: inherit;
+    font-weight: 700;
+    font-size: 0.9rem;
+    cursor: pointer;
+}
+.confirm-box .btn-yes { background: var(--bar-green); color: #000; }
+.confirm-box .btn-no  { background: var(--lcars-red); color: #000; }
+
+/* ── Mission Briefing ───────────────────────────── */
+
+.briefing-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.85);
+    z-index: 90;
+    align-items: center;
+    justify-content: center;
+}
+.briefing-overlay.active { display: flex; }
+
+.briefing-box {
+    background: var(--lcars-panel-bg);
+    border: 2px solid var(--bar-cyan);
+    border-radius: 16px;
+    padding: 32px;
+    max-width: 600px;
+    text-align: center;
+}
+.briefing-box h2 {
+    color: var(--bar-cyan);
+    font-size: 1.3rem;
+    letter-spacing: 3px;
+    margin-bottom: 16px;
+}
+.briefing-box .briefing-desc {
+    color: #ccc;
+    font-size: 0.95rem;
+    margin-bottom: 12px;
+    line-height: 1.5;
+}
+.briefing-box .briefing-obj {
+    color: var(--lcars-gold);
+    font-size: 1rem;
+    font-weight: 700;
+}
+.briefing-box .briefing-deadline {
+    color: var(--lcars-text-dim);
+    font-size: 0.85rem;
+    margin-top: 8px;
+}
+.briefing-box button {
+    margin-top: 20px;
+    padding: 10px 32px;
+    background: var(--bar-cyan);
+    color: #000;
+    border: none;
+    border-radius: 8px;
+    font-family: inherit;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    letter-spacing: 1px;
+}
+
+/* ── Game Over ──────────────────────────────────── */
+
+.gameover-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.85);
+    z-index: 95;
+    align-items: center;
+    justify-content: center;
+}
+.gameover-overlay.active { display: flex; }
+
+.gameover-box {
+    border-radius: 16px;
+    padding: 40px;
+    text-align: center;
+    max-width: 500px;
+}
+.gameover-box.victory {
+    border: 2px solid var(--bar-green);
+    background: var(--lcars-panel-bg);
+}
+.gameover-box.defeat {
+    border: 2px solid var(--lcars-red);
+    background: var(--lcars-panel-bg);
+}
+.gameover-box h2 {
+    font-size: 1.5rem;
+    letter-spacing: 4px;
+    margin-bottom: 16px;
+}
+.gameover-box.victory h2 { color: var(--bar-green); }
+.gameover-box.defeat h2  { color: var(--lcars-red); }
+.gameover-box .reason {
+    color: #ccc;
+    font-size: 1rem;
+    margin-bottom: 20px;
+}
+.gameover-box button {
+    padding: 10px 32px;
+    border: none;
+    border-radius: 8px;
+    font-family: inherit;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    background: var(--lcars-amber);
+    color: #000;
+}
+
+/* ── Loading spinner ────────────────────────────── */
+
+.spinner {
+    display: none;
+    color: var(--lcars-amber);
+    font-size: 0.85rem;
+    letter-spacing: 2px;
+    animation: blink 1s infinite;
+}
+.spinner.active { display: inline; }
+
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+}
+
+/* ── Setup page ─────────────────────────────────── */
+
+.setup-page {
+    max-width: 700px;
+    margin: 40px auto;
+    padding: 20px;
+}
+
+.setup-page h1 {
+    color: var(--lcars-gold);
+    font-size: 2rem;
+    letter-spacing: 4px;
+    text-align: center;
+    margin-bottom: 32px;
+}
+
+.setup-section {
+    margin-bottom: 24px;
+}
+
+.setup-section h3 {
+    color: var(--lcars-tan);
+    font-size: 1rem;
+    letter-spacing: 2px;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+}
+
+.setup-section input[type="text"] {
+    width: 100%;
+    background: #0a0a18;
+    border: 1px solid #333;
+    border-radius: 8px;
+    color: var(--lcars-gold);
+    font-family: inherit;
+    font-size: 1.1rem;
+    padding: 10px 14px;
+    outline: none;
+}
+.setup-section input[type="text"]:focus {
+    border-color: var(--lcars-amber);
+}
+
+.option-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 8px;
+}
+
+.option-card {
+    background: #0a0a18;
+    border: 2px solid #222;
+    border-radius: 12px;
+    padding: 12px;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+    text-align: center;
+}
+.option-card:hover {
+    border-color: var(--lcars-amber);
+    background: #111;
+}
+.option-card.selected {
+    border-color: var(--lcars-amber);
+    background: #1a1a10;
+}
+.option-card .opt-name {
+    font-size: 1rem;
+    color: var(--lcars-gold);
+    font-weight: 700;
+}
+.option-card .opt-stats {
+    font-size: 0.7rem;
+    color: var(--lcars-text-dim);
+    margin-top: 4px;
+    line-height: 1.4;
+}
+
+.start-btn {
+    display: block;
+    width: 100%;
+    padding: 14px;
+    background: var(--lcars-amber);
+    color: #000;
+    border: none;
+    border-radius: 12px;
+    font-family: inherit;
+    font-weight: 700;
+    font-size: 1.2rem;
+    letter-spacing: 3px;
+    cursor: pointer;
+    margin-top: 32px;
+}
+.start-btn:hover { background: var(--lcars-gold); }
+.start-btn:disabled { opacity: 0.4; cursor: default; }
+
+/* ── Index page ─────────────────────────────────── */
+
+.index-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    gap: 24px;
+}
+
+.index-page h1 {
+    color: var(--lcars-gold);
+    font-size: 2.5rem;
+    letter-spacing: 6px;
+}
+
+.index-page .subtitle {
+    color: var(--lcars-text-dim);
+    font-size: 0.9rem;
+    letter-spacing: 2px;
+}
+
+.index-page a {
+    display: inline-block;
+    padding: 14px 40px;
+    background: var(--lcars-amber);
+    color: #000;
+    text-decoration: none;
+    border-radius: 12px;
+    font-family: inherit;
+    font-weight: 700;
+    font-size: 1.1rem;
+    letter-spacing: 2px;
+}
+.index-page a:hover { background: var(--lcars-gold); }
+
+/* ── Scrollbar ──────────────────────────────────── */
+
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #0a0a12; }
+::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--lcars-amber); }
