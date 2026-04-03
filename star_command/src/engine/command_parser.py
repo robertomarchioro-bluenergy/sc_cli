@@ -37,6 +37,8 @@ class CommandAction(Enum):
     CREW_MEETING = "crew_meeting"
     CAPTAIN_LOG_MANUAL = "captain_log_manual"
     EXPORT_LOG = "export_log"
+    QUIT = "quit"
+    SAVE_AND_QUIT = "save_and_quit"
     UNKNOWN = "unknown"
 
 
@@ -44,6 +46,7 @@ class CommandAction(Enum):
 CONFIRM_REQUIRED: set[CommandAction] = {
     CommandAction.FIRE_TORPEDO,
     CommandAction.CREW_MEETING,
+    CommandAction.QUIT,
 }
 
 
@@ -80,6 +83,8 @@ PATTERNS: list[tuple[str, CommandAction]] = [
     (r"(riconosc|ringrazi|acknowledge)\s+(\w+)", CommandAction.ACKNOWLEDGE_OFFICER),
     (r"(riunione|meeting).*(equipaggio|crew)", CommandAction.CREW_MEETING),
     (r"(missione|mission|obiettiv)", CommandAction.SHOW_MISSION),
+    (r"(salva\s*(e|ed)?\s*(esci|quit)|save\s*(and|&)?\s*quit)", CommandAction.SAVE_AND_QUIT),
+    (r"(esci|quit|exit|fine\s+partita|abbandona)", CommandAction.QUIT),
     (r"\?", CommandAction.SHOW_MENU),
 ]
 
@@ -239,6 +244,8 @@ def get_contextual_menu(context: str) -> list[tuple[str, str]]:
     universal = [
         ("diario", "Mostra diario del Capitano"),
         ("missione", "Mostra obiettivi missione"),
+        ("salva e esci", "Salva partita e torna al menu"),
+        ("esci", "Abbandona partita (senza salvare)"),
         ("?", "Mostra questo menu"),
     ]
     return base_menu + universal

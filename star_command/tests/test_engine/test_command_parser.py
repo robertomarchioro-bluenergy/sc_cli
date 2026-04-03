@@ -155,6 +155,34 @@ class TestParseOtherCommands:
         assert result.action == CommandAction.ACKNOWLEDGE_OFFICER
 
 
+class TestQuitCommands:
+    """Test comandi uscita"""
+
+    def test_quit_italian(self):
+        result = parse("esci")
+        assert result.action == CommandAction.QUIT
+
+    def test_quit_english(self):
+        result = parse("quit")
+        assert result.action == CommandAction.QUIT
+
+    def test_exit(self):
+        result = parse("exit")
+        assert result.action == CommandAction.QUIT
+
+    def test_save_and_quit_italian(self):
+        result = parse("salva e esci")
+        assert result.action == CommandAction.SAVE_AND_QUIT
+
+    def test_save_and_quit_english(self):
+        result = parse("save and quit")
+        assert result.action == CommandAction.SAVE_AND_QUIT
+
+    def test_save_quit_short(self):
+        result = parse("salva ed esci")
+        assert result.action == CommandAction.SAVE_AND_QUIT
+
+
 class TestConfirmation:
     """Test sistema conferma"""
 
@@ -163,6 +191,12 @@ class TestConfirmation:
 
     def test_crew_meeting_needs_confirm(self):
         assert needs_confirmation(CommandAction.CREW_MEETING) is True
+
+    def test_quit_needs_confirm(self):
+        assert needs_confirmation(CommandAction.QUIT) is True
+
+    def test_save_and_quit_no_confirm(self):
+        assert needs_confirmation(CommandAction.SAVE_AND_QUIT) is False
 
     def test_phaser_no_confirm(self):
         assert needs_confirmation(CommandAction.FIRE_PHASER) is False
@@ -188,6 +222,8 @@ class TestContextualMenu:
             menu = get_contextual_menu(ctx)
             commands = [cmd for cmd, _ in menu]
             assert "?" in commands
+            assert "esci" in commands
+            assert "salva e esci" in commands
 
     def test_unknown_context_fallback(self):
         menu = get_contextual_menu("UNKNOWN_CONTEXT")

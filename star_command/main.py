@@ -241,6 +241,10 @@ def run_new_game(console: Console, presenter: CLILcarsPresenter, campaign_path: 
             model=model,
         )
 
+        # Uscita volontaria — torna al menu principale
+        if end_reason == "QUIT":
+            break
+
         # Fine missione
         victory = game_state.mission_completed
         presenter.show_game_over(end_reason, victory)

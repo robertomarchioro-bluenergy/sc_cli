@@ -98,9 +98,13 @@ class GameState:
     mission_completed: bool = False
     mission_failed: bool = False
     faser_hits_on_enemies: dict[str, int] = field(default_factory=dict)  # enemy_id → colpi faser
+    quit_requested: bool = False
+    save_on_quit: bool = False
 
     def is_over(self) -> bool:
         """Verifica se la partita è finita"""
+        if self.quit_requested:
+            return True
         if self.ship.is_destroyed():
             return True
         if self.stardate > self.mission.deadline_stardate:
@@ -316,6 +320,19 @@ def execute_command(
         path = game_state.captain_log.export_to_file(game_state.ship.name)
         presenter.show_narrative_short(f"Diario esportato: {path}", color="green")
 
+    elif action == CommandAction.SAVE_AND_QUIT:
+        game_state.quit_requested = True
+        game_state.save_on_quit = True
+        presenter.show_narrative_short("Salvataggio in corso... Rotta verso il porto.", color="cyan")
+
+    elif action == CommandAction.QUIT:
+        if command_parser.needs_confirmation(action):
+            if not presenter.show_confirm("Abbandonare la missione senza salvare? [S/N]"):
+                return
+        game_state.quit_requested = True
+        game_state.save_on_quit = False
+        presenter.show_narrative_short("Il Capitano lascia il ponte di comando.", color="yellow")
+
     elif action == CommandAction.UNKNOWN:
         context = game_state.get_context()
         presenter.show_contextual_menu(context)
@@ -329,6 +346,7 @@ def execute_command(
         CommandAction.OFFICER_SCIENCE, CommandAction.OFFICER_MEDICAL,
         CommandAction.OFFICER_SPECIAL, CommandAction.CAPTAIN_LOG_MANUAL,
         CommandAction.ACKNOWLEDGE_OFFICER, CommandAction.EXPORT_LOG,
+        CommandAction.QUIT, CommandAction.SAVE_AND_QUIT,
         CommandAction.UNKNOWN,
     ):
         game_state.stardate += 0.05
@@ -772,6 +790,26 @@ def run_game_loop(
                 ))
             except Exception:
                 logger.warning("Impossibile salvare stato automaticamente")
+
+    # Gestione uscita volontaria
+    if game_state.quit_requested:
+        if game_state.save_on_quit:
+            try:
+                save_campaign_state(CampaignState(
+                    nome_campagna=game_state.mission.nome,
+                    captain_name="Capitano",
+                    ship=game_state.ship,
+                    systems=game_state.systems,
+                    repair_queue=game_state.repair_queue,
+                    difficulty=difficulty,
+                    captain_log=game_state.captain_log,
+                    stardate=game_state.stardate,
+                ))
+                logger.info("Partita salvata su richiesta del Capitano")
+            except Exception:
+                logger.warning("Impossibile salvare stato")
+        logger.info("Game loop terminato: uscita volontaria")
+        return "QUIT"
 
     end_reason = check_end_conditions(game_state) or "Partita terminata"
     logger.info("Game loop terminato: %s", end_reason)
